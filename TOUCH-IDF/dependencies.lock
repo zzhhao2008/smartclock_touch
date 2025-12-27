@@ -12,7 +12,7 @@ dependencies:
   idf:
     source:
       type: idf
-    version: 5.1.6
+    version: 5.5.1
 direct_dependencies:
 - espressif/esp_jpeg
 manifest_hash: 58880dd18ca68c654e5b57c56043ef6b1666cfc4dc75a4ab2e86342d6eb33aed

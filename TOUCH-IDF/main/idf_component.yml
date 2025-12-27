@@ -1,6 +1,7 @@
 ## IDF Component Manager Manifest File
 dependencies:
   esp_jpeg:
-    version: "^1.0.0"
+    version: ^1.0.0
     rules:
-      - if: "idf_version >=5.0"
+    - if: idf_version >=5.0
+  espp/ft5x06: ^1.0.33
