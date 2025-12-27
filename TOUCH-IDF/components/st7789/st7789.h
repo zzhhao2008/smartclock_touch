@@ -92,5 +92,7 @@ void lcdSetRect(TFT_t * dev, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 void lcdSetCursor(TFT_t * dev, uint16_t x0, uint16_t y0, uint16_t r, uint16_t color, uint16_t *save);
 void lcdResetCursor(TFT_t * dev, uint16_t x0, uint16_t y0, uint16_t r, uint16_t color, uint16_t *save);
 void lcdDrawFinish(TFT_t *dev);
+void lcdSetAddrWindow(TFT_t * dev, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
+void lcdWriteBitmap(TFT_t * dev, uint8_t * bitmap, int16_t w, int16_t h);
 #endif /* MAIN_ST7789_H_ */
 

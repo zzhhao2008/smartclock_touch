@@ -1182,3 +1182,33 @@ void lcdDrawFinish(TFT_t *dev)
 	}
 	return;
 }
+// Add this to st7789.c
+void lcdSetAddrWindow(TFT_t * dev, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+    // Column Address Set (CASET)
+    spi_master_write_command(dev, 0x2A);
+    uint8_t data[4];
+    data[0] = (x0 >> 8) & 0xFF;
+    data[1] = x0 & 0xFF;
+    data[2] = (x1 >> 8) & 0xFF;
+    data[3] = x1 & 0xFF;
+    spi_master_write_byte(dev->_SPIHandle, data, 4);
+
+    // Row Address Set (RASET)
+    spi_master_write_command(dev, 0x2B);
+    data[0] = (y0 >> 8) & 0xFF;
+    data[1] = y0 & 0xFF;
+    data[2] = (y1 >> 8) & 0xFF;
+    data[3] = y1 & 0xFF;
+    spi_master_write_byte(dev->_SPIHandle, data, 4);
+
+    // Memory Write (RAMWR)
+    spi_master_write_command(dev, 0x2C);
+}
+
+void lcdWriteBitmap(TFT_t * dev, uint8_t * bitmap, int16_t w, int16_t h) {
+    uint32_t size = w * h;
+    uint16_t *colors = (uint16_t *)bitmap;
+    
+    // Write the bitmap data to the display
+    spi_master_write_colors(dev, colors, size);
+}
