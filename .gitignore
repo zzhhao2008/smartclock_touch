@@ -1,1 +1,3 @@
 /TOUCH-IDF/build
+TOUCH-IDF/dependencies.lock
+/TOUCH-IDF/managed_components

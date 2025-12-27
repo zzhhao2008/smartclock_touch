@@ -1,4 +1,70 @@
 dependencies:
+  espp/base_component:
+    component_hash: 569d8a4c2520fbb8f9c79ddd772e278506c80099e218599c602a8891bb995bf9
+    dependencies:
+    - name: espp/logger
+      registry_url: https://components.espressif.com
+      require: private
+      version: '>=1.0'
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com
+      type: service
+    version: 1.0.33
+  espp/base_peripheral:
+    component_hash: e9d1f27fa9346541b76aebb7dbf6150284cc600ac8019e208f600f6afac49990
+    dependencies:
+    - name: espp/base_component
+      registry_url: https://components.espressif.com
+      require: private
+      version: '>=1.0'
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com
+      type: service
+    version: 1.0.33
+  espp/format:
+    component_hash: 9723eeb2cadb7191255337320f51edec7b300c648d98aa4ab92e93365297acc4
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com
+      type: service
+    version: 1.0.33
+  espp/ft5x06:
+    component_hash: a6ed8bab41f8649c5aa8ee5dd021696cd10812866a5289cf16532f7867e438c4
+    dependencies:
+    - name: espp/base_peripheral
+      registry_url: https://components.espressif.com
+      require: private
+      version: '>=1.0'
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.0.33
+  espp/logger:
+    component_hash: 91bc16342ba44200df5b56977270921a863e3447d3c94049a75e30b8d515b34d
+    dependencies:
+    - name: espp/format
+      registry_url: https://components.espressif.com
+      require: private
+      version: '>=1.0'
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com
+      type: service
+    version: 1.0.33
   espressif/esp_jpeg:
     component_hash: defb83669293cbf86d0fa86b475ba5517aceed04ed70db435388c151ab37b5d7
     dependencies:
@@ -14,7 +80,8 @@ dependencies:
       type: idf
     version: 5.5.1
 direct_dependencies:
+- espp/ft5x06
 - espressif/esp_jpeg
-manifest_hash: 58880dd18ca68c654e5b57c56043ef6b1666cfc4dc75a4ab2e86342d6eb33aed
+manifest_hash: 3e9409a37cf9445b784811b6c5bfa7ab74a92a795f8bf175044760d8c620185d
 target: esp32s3
 version: 2.0.0
