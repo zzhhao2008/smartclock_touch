@@ -59,10 +59,10 @@ void lvgl_display_init(void)
     lcdBacklightOn(&dev);
 
     //显示一个空白屏幕
-    lcdFillScreen(&dev, WHITE);
+    //lcdFillScreen(&dev, WHITE);
 
     //等待1s
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    //vTaskDelay(pdMS_TO_TICKS(1000));
     
     // Initialize LVGL display driver
     lv_disp_drv_init(&disp_drv);

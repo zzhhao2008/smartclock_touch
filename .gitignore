@@ -1,3 +1,5 @@
 /TOUCH-IDF/build
 TOUCH-IDF/dependencies.lock
 /TOUCH-IDF/managed_components
+/jlc_lvgldemo/08-lcd_lvgl/build
+/jlc_lvgldemo/08-lcd_lvgl/managed_components
