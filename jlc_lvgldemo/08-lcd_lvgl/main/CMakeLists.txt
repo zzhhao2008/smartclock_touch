@@ -1,2 +1,3 @@
-idf_component_register(SRCS "esp32_s3_szp.c" "main.c"
-                    INCLUDE_DIRS ".")
+idf_component_register(SRCS "basic/jlc_lcd.c" "main.c"
+INCLUDE_DIRS "."
+REQUIRES littlefs)

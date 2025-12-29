@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "esp32_s3_szp.h"
+#include "jlc_lcd.h"
 
 
 static const char *TAG = "esp32_s3_szp";
@@ -23,144 +23,6 @@ esp_err_t bsp_i2c_init(void)
 /***************************  I2C ↑  *******************************************/
 /*******************************************************************************/
 
-
-/*******************************************************************************/
-/***************************  姿态传感器 QMI8658 ↓   ****************************/
-
-// 读取QMI8658寄存器的值
-esp_err_t qmi8658_register_read(uint8_t reg_addr, uint8_t *data, size_t len)
-{
-    return i2c_master_write_read_device(BSP_I2C_NUM, QMI8658_SENSOR_ADDR,  &reg_addr, 1, data, len, 1000 / portTICK_PERIOD_MS);
-}
-
-// 给QMI8658的寄存器写值
-esp_err_t qmi8658_register_write_byte(uint8_t reg_addr, uint8_t data)
-{
-    uint8_t write_buf[2] = {reg_addr, data};
-
-    return i2c_master_write_to_device(BSP_I2C_NUM, QMI8658_SENSOR_ADDR, write_buf, sizeof(write_buf), 1000 / portTICK_PERIOD_MS);
-}
-
-// 初始化qmi8658
-void qmi8658_init(void)
-{
-    uint8_t id = 0; // 芯片的ID号
-
-    qmi8658_register_read(QMI8658_WHO_AM_I, &id ,1); // 读芯片的ID号
-    while (id != 0x05)  // 判断读到的ID号是否是0x05
-    {
-        vTaskDelay(1000 / portTICK_PERIOD_MS);  // 延时1秒
-        qmi8658_register_read(QMI8658_WHO_AM_I, &id ,1); // 读取ID号
-    }
-    ESP_LOGI(TAG, "QMI8658 OK!");  // 打印信息
-
-    qmi8658_register_write_byte(QMI8658_RESET, 0xb0);  // 复位  
-    vTaskDelay(10 / portTICK_PERIOD_MS);  // 延时10ms
-    qmi8658_register_write_byte(QMI8658_CTRL1, 0x40); // CTRL1 设置地址自动增加
-    qmi8658_register_write_byte(QMI8658_CTRL7, 0x03); // CTRL7 允许加速度和陀螺仪
-    qmi8658_register_write_byte(QMI8658_CTRL2, 0x95); // CTRL2 设置ACC 4g 250Hz
-    qmi8658_register_write_byte(QMI8658_CTRL3, 0xd5); // CTRL3 设置GRY 512dps 250Hz 
-}
-
-// 读取加速度和陀螺仪寄存器值
-void qmi8658_Read_AccAndGry(t_sQMI8658 *p)
-{
-    uint8_t status, data_ready=0;
-    int16_t buf[6];
-
-    qmi8658_register_read(QMI8658_STATUS0, &status, 1); // 读状态寄存器 
-    if (status & 0x03) // 判断加速度和陀螺仪数据是否可读
-        data_ready = 1;
-    if (data_ready == 1){  // 如果数据可读
-        data_ready = 0;
-        qmi8658_register_read(QMI8658_AX_L, (uint8_t *)buf, 12); // 读加速度和陀螺仪值
-        p->acc_x = buf[0];
-        p->acc_y = buf[1];
-        p->acc_z = buf[2];
-        p->gyr_x = buf[3];
-        p->gyr_y = buf[4];
-        p->gyr_z = buf[5];
-    }
-}
-
-// 获取XYZ轴的倾角值
-void qmi8658_fetch_angleFromAcc(t_sQMI8658 *p)
-{
-    float temp;
-
-    qmi8658_Read_AccAndGry(p); // 读取加速度和陀螺仪的寄存器值
-    // 根据寄存器值 计算倾角值 并把弧度转换成角度
-    temp = (float)p->acc_x / sqrt( ((float)p->acc_y * (float)p->acc_y + (float)p->acc_z * (float)p->acc_z) );
-    p->AngleX = atan(temp)*57.29578f; // 180/π=57.29578
-    temp = (float)p->acc_y / sqrt( ((float)p->acc_x * (float)p->acc_x + (float)p->acc_z * (float)p->acc_z) );
-    p->AngleY = atan(temp)*57.29578f; // 180/π=57.29578
-    temp = sqrt( ((float)p->acc_x * (float)p->acc_x + (float)p->acc_y * (float)p->acc_y) ) / (float)p->acc_z;
-    p->AngleZ = atan(temp)*57.29578f; // 180/π=57.29578
-}
-/***************************  姿态传感器 QMI8658 ↑  ****************************/
-/*******************************************************************************/
-
-
-/***********************************************************/
-/***************    IO扩展芯片 ↓   *************************/
-
-// 读取PCA9557寄存器的值
-esp_err_t pca9557_register_read(uint8_t reg_addr, uint8_t *data, size_t len)
-{
-    return i2c_master_write_read_device(BSP_I2C_NUM, PCA9557_SENSOR_ADDR,  &reg_addr, 1, data, len, 1000 / portTICK_PERIOD_MS);
-}
-
-// 给PCA9557的寄存器写值
-esp_err_t pca9557_register_write_byte(uint8_t reg_addr, uint8_t data)
-{
-    uint8_t write_buf[2] = {reg_addr, data};
-
-    return i2c_master_write_to_device(BSP_I2C_NUM, PCA9557_SENSOR_ADDR, write_buf, sizeof(write_buf), 1000 / portTICK_PERIOD_MS);
-}
-
-// 初始化PCA9557 IO扩展芯片
-void pca9557_init(void)
-{
-    // 写入控制引脚默认值 DVP_PWDN=1  PA_EN = 0  LCD_CS = 1
-    pca9557_register_write_byte(PCA9557_OUTPUT_PORT, 0x05);  
-    // 把PCA9557芯片的IO1 IO1 IO2设置为输出 其它引脚保持默认的输入
-    pca9557_register_write_byte(PCA9557_CONFIGURATION_PORT, 0xf8); 
-}
-
-// 设置PCA9557芯片的某个IO引脚输出高低电平
-esp_err_t pca9557_set_output_state(uint8_t gpio_bit, uint8_t level)
-{
-    uint8_t data;
-    esp_err_t res = ESP_FAIL;
-
-    pca9557_register_read(PCA9557_OUTPUT_PORT, &data, 1);
-    res = pca9557_register_write_byte(PCA9557_OUTPUT_PORT, SET_BITS(data, gpio_bit, level));
-
-    return res;
-}
-
-// 控制 PCA9557_LCD_CS 引脚输出高低电平 参数0输出低电平 参数1输出高电平 
-void lcd_cs(uint8_t level)
-{
-    pca9557_set_output_state(LCD_CS_GPIO, level);
-}
-
-// 控制 PCA9557_PA_EN 引脚输出高低电平 参数0输出低电平 参数1输出高电平 
-void pa_en(uint8_t level)
-{
-    pca9557_set_output_state(PA_EN_GPIO, level);
-}
-
-// 控制 PCA9557_DVP_PWDN 引脚输出高低电平 参数0输出低电平 参数1输出高电平 
-void dvp_pwdn(uint8_t level)
-{
-    pca9557_set_output_state(DVP_PWDN_GPIO, level);
-}
-
-/***************    IO扩展芯片 ↑   *************************/
-/***********************************************************/
-
-
 /***********************************************************/
 /****************    LCD显示屏 ↓   *************************/
 
@@ -176,7 +38,7 @@ esp_err_t bsp_display_brightness_init(void)
         .timer_sel = 0,
         .duty = 0,
         .hpoint = 0,
-        .flags.output_invert = true
+        .flags.output_invert = false
     };
     const ledc_timer_config_t LCD_backlight_timer = {
         .speed_mode = LEDC_LOW_SPEED_MODE,
@@ -236,7 +98,7 @@ esp_err_t bsp_display_new(void)
     // 背光初始化
     ESP_RETURN_ON_ERROR(bsp_display_brightness_init(), TAG, "Brightness init failed");
     // 初始化SPI总线
-    ESP_LOGD(TAG, "Initialize SPI bus");
+    ESP_LOGI(TAG, "Initialize SPI bus");
     const spi_bus_config_t buscfg = {
         .sclk_io_num = BSP_LCD_SPI_CLK,
         .mosi_io_num = BSP_LCD_SPI_MOSI,
@@ -247,7 +109,7 @@ esp_err_t bsp_display_new(void)
     };
     ESP_RETURN_ON_ERROR(spi_bus_initialize(BSP_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO), TAG, "SPI init failed");
     // 液晶屏控制IO初始化
-    ESP_LOGD(TAG, "Install panel IO");
+    ESP_LOGI(TAG, "Install panel IO");
     const esp_lcd_panel_io_spi_config_t io_config = {
         .dc_gpio_num = BSP_LCD_DC,
         .cs_gpio_num = BSP_LCD_SPI_CS,
@@ -435,97 +297,4 @@ void lcd_set_color(uint16_t color)
     }
 }
 /***************    LCD显示屏 ↑   *************************/
-/***********************************************************/
-
-
-
-/***********************************************************/
-/****************    摄像头 ↓   ****************************/
-#if CAMERA_EN
-// 定义lcd显示队列句柄
-static QueueHandle_t xQueueLCDFrame = NULL;
-
-// 摄像头硬件初始化
-void bsp_camera_init(void)
-{
-    dvp_pwdn(0); // 打开摄像头
-
-    camera_config_t config;
-    config.ledc_channel = LEDC_CHANNEL_1;  // LEDC通道选择  用于生成XCLK时钟 但是S3不用
-    config.ledc_timer = LEDC_TIMER_1; // LEDC timer选择  用于生成XCLK时钟 但是S3不用
-    config.pin_d0 = CAMERA_PIN_D0;
-    config.pin_d1 = CAMERA_PIN_D1;
-    config.pin_d2 = CAMERA_PIN_D2;
-    config.pin_d3 = CAMERA_PIN_D3;
-    config.pin_d4 = CAMERA_PIN_D4;
-    config.pin_d5 = CAMERA_PIN_D5;
-    config.pin_d6 = CAMERA_PIN_D6;
-    config.pin_d7 = CAMERA_PIN_D7;
-    config.pin_xclk = CAMERA_PIN_XCLK;
-    config.pin_pclk = CAMERA_PIN_PCLK;
-    config.pin_vsync = CAMERA_PIN_VSYNC;
-    config.pin_href = CAMERA_PIN_HREF;
-    config.pin_sccb_sda = -1;   // 这里写-1 表示使用已经初始化的I2C接口
-    config.pin_sccb_scl = CAMERA_PIN_SIOC;
-    config.sccb_i2c_port = 0;
-    config.pin_pwdn = CAMERA_PIN_PWDN;
-    config.pin_reset = CAMERA_PIN_RESET;
-    config.xclk_freq_hz = XCLK_FREQ_HZ;
-    config.pixel_format = PIXFORMAT_RGB565;
-    config.frame_size = FRAMESIZE_QVGA;
-    config.jpeg_quality = 12;
-    config.fb_count = 2;
-    config.fb_location = CAMERA_FB_IN_PSRAM;
-    config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
-
-    // camera init
-    esp_err_t err = esp_camera_init(&config); // 配置上面定义的参数
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Camera init failed with error 0x%x", err);
-        return;
-    }
-
-    sensor_t *s = esp_camera_sensor_get(); // 获取摄像头型号
-
-    if (s->id.PID == GC0308_PID) {
-        s->set_hmirror(s, 1);  // 这里控制摄像头镜像 写1镜像 写0不镜像
-    }
-}
-
-// lcd处理任务
-static void task_process_lcd(void *arg)
-{
-    camera_fb_t *frame = NULL;
-
-    while (true)
-    {
-        if (xQueueReceive(xQueueLCDFrame, &frame, portMAX_DELAY))
-        {
-            esp_lcd_panel_draw_bitmap(panel_handle, 0, 0, frame->width, frame->height, (uint16_t *)frame->buf);
-            esp_camera_fb_return(frame);
-        }
-    }
-}
-
-// 摄像头处理任务
-static void task_process_camera(void *arg)
-{
-    while (true)
-    {
-        camera_fb_t *frame = esp_camera_fb_get();
-        if (frame)
-            xQueueSend(xQueueLCDFrame, &frame, portMAX_DELAY);
-    }
-}
-
-// 让摄像头显示到LCD
-void app_camera_lcd(void)
-{
-    xQueueLCDFrame = xQueueCreate(2, sizeof(camera_fb_t *));
-    xTaskCreatePinnedToCore(task_process_camera, "task_process_camera", 3 * 1024, NULL, 5, NULL, 1);
-    xTaskCreatePinnedToCore(task_process_lcd, "task_process_lcd", 4 * 1024, NULL, 5, NULL, 0);
-}
-#endif
-/********************    摄像头 ↑   *************************/
 /***********************************************************/
