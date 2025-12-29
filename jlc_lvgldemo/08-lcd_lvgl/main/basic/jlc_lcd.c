@@ -133,7 +133,7 @@ esp_err_t bsp_display_new(void)
     esp_lcd_panel_init(panel_handle);  // 初始化配置寄存器
     esp_lcd_panel_invert_color(panel_handle, true); // 颜色反转
     esp_lcd_panel_swap_xy(panel_handle, true);  // 显示翻转 
-    esp_lcd_panel_mirror(panel_handle, true, false); // 镜像
+    esp_lcd_panel_mirror(panel_handle, false, true); // 镜像
 
     return ret;
 
@@ -210,8 +210,8 @@ esp_err_t bsp_touch_new(esp_lcd_touch_handle_t *ret_touch)
         },
         .flags = {
             .swap_xy = 1,
-            .mirror_x = 1,
-            .mirror_y = 0,
+            .mirror_x = 0,
+            .mirror_y = 1,
         },
     };
     esp_lcd_panel_io_handle_t tp_io_handle = NULL;
