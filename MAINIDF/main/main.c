@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include "basic/jlc_lcd.h"
-#include "logo_en_240x240_lcd.h"
-#include "yingwu.h"
 #include "demos/lv_demos.h"
 #include "esp_littlefs.h"
 #include "driver/gpio.h"
