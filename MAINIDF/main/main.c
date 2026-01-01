@@ -78,6 +78,13 @@ bool init_gpio(void)
     return true;
 }
 
+/**
+ * 按键事件回调示例：
+ * - evt == KEY_EVT_PRESS  表示按下事件
+ * - evt == KEY_EVT_RELEASE 表示释放事件
+ *
+ * 你可以在回调中执行相应处理（例如：更新 UI、发送事件、长按检测等）。
+ */
 static void key_event_handler(int gpio, key_event_t evt, void* arg)
 {
     if (evt == KEY_EVT_PRESS) {
@@ -86,6 +93,16 @@ static void key_event_handler(int gpio, key_event_t evt, void* arg)
         ESP_LOGI("KEY", "GPIO%d released", gpio);
     }
 }
+
+/*
+ * 使用说明（示例流程）：
+ * 1. 在系统启动时调用 hw_key_init()
+ * 2. 使用 hw_key_add(GPIO, active_level) 添加需要管理的按键
+ * 3. 使用 hw_key_register_callback(GPIO, cb, arg) 注册响应回调
+ *
+ * 注意：hw_key 使用中断 + 队列 + 后台任务的方式，回调在任务上下文中被调用，
+ * 因此可执行相对复杂的操作（但仍应避免长时间阻塞以影响其他任务）。
+ */
 
 void app_main(void)
 {
