@@ -29,39 +29,46 @@ static void init_littlefs(void)
         }
         return;
     }
-
     size_t total = 0, used = 0;
     esp_littlefs_info("storage", &total, &used);
     ESP_LOGI("littlefs", "Partition size: total: %d, used: %d.", total, used);
 }
 
-bool power_acc(bool sta)
+bool init_gpio(void)
 {
-    // 配置 GPIO40 为输出模式（仅首次调用时配置）
-    static bool is_initialized = false;
-    if (!is_initialized) {
-        gpio_config_t io_conf = {
-            .pin_bit_mask = BIT64(40),          // 设置GPIO40
-            .mode = GPIO_MODE_OUTPUT,           // 输出模式
-            .pull_up_en = GPIO_PULLUP_DISABLE,  // 禁用上拉
-            .pull_down_en = GPIO_PULLDOWN_DISABLE, // 禁用下拉
-            .intr_type = GPIO_INTR_DISABLE      // 禁用中断
-        };
-        gpio_config(&io_conf);
-        is_initialized = true;
-    }
+    typedef struct {
+        int pin;
+        gpio_mode_t mode;
+        gpio_pullup_t pull_up;
+        gpio_pulldown_t pull_down;
+        gpio_int_type_t intr_type;
+    } gpio_init_t;
+    gpio_init_t gpios[] = {
+        {40, GPIO_MODE_OUTPUT, GPIO_PULLUP_DISABLE, GPIO_PULLDOWN_DISABLE, GPUI_INTR_DISABLE},  // 电源控制
+    };
 
-    // 设置电平 (sta=true 输出高电平, sta=false 输出低电平)
-    gpio_set_level(40, (uint32_t)sta);
-    
-    return true; // 始终返回成功（实际使用中可根据需求添加错误检查）
+    gpio_config_t io_conf = {0}; // 初始化为0
+    for (int i = 0; i < sizeof(gpios) / sizeof(gpios[0]); i++) {
+        io_conf.pin_bit_mask = BIT64(gpios[i].pin);
+        io_conf.mode = gpios[i].mode;
+        io_conf.pull_up_en = gpios[i].pull_up;
+        io_conf.pull_down_en = gpios[i].pull_down;
+        io_conf.intr_type = gpios[i].intr_type;
+        if (gpio_config(&io_conf) != ESP_OK) {
+            ESP_LOGE("GPIO", "GPIO%d init failed", gpios[i].pin);
+            return false;
+        }
+        ESP_LOGI("GPIO", "GPIO%d initialized", gpios[i].pin);
+    }
+    return true;
 }
 
 void app_main(void)
 {
-    power_acc(true); // 打开电源
+    init_gpio();
+    gpio_set_level(40, (uint32_t)sta); // 打开电源
     bsp_i2c_init();   // I2C初始化
-    init_littlefs();  // <<< 新增：初始化文件系统
+    init_littlefs();  // 初始化文件系统
     bsp_lvgl_start(); // 初始化液晶屏lvgl接口
 
     /* 下面5个demos 只打开1个运行 */
