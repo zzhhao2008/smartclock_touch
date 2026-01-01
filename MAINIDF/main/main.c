@@ -6,36 +6,37 @@
 
 static void init_littlefs(void)
 {
+    static const char *TAG = "LittleFS";
     const esp_vfs_littlefs_conf_t conf = {
         .base_path = "/littlefs",
         .partition_label = "storage",
         .format_if_mount_failed = true
     };
-
     esp_err_t ret = esp_vfs_littlefs_register(&conf);
     if (ret != ESP_OK)
     {
         if (ret == ESP_FAIL)
         {
-            ESP_LOGE("littlefs", "Failed to mount or format filesystem.");
+            ESP_LOGE(TAG, "Failed to mount or format filesystem.");
         }
         else if (ret == ESP_ERR_NOT_FOUND)
         {
-            ESP_LOGE("littlefs", "Failed to find littlefs partition.");
+            ESP_LOGE(TAG, "Failed to find littlefs partition.");
         }
         else
         {
-            ESP_LOGE("littlefs", "Failed to initialize littlefs (%s).", esp_err_to_name(ret));
+            ESP_LOGE(TAG, "Failed to initialize littlefs (%s).", esp_err_to_name(ret));
         }
         return;
     }
     size_t total = 0, used = 0;
     esp_littlefs_info("storage", &total, &used);
-    ESP_LOGI("littlefs", "Partition size: total: %d, used: %d.", total, used);
+    ESP_LOGI(TAG, "Partition size: total: %d, used: %d.", total, used);
 }
 
 bool init_gpio(void)
 {
+    static const char *TAG = "GPIO";
     typedef struct {
         int pin;
         gpio_mode_t mode;
@@ -55,10 +56,10 @@ bool init_gpio(void)
         io_conf.pull_down_en = gpios[i].pull_down;
         io_conf.intr_type = gpios[i].intr_type;
         if (gpio_config(&io_conf) != ESP_OK) {
-            ESP_LOGE("GPIO", "GPIO%d init failed", gpios[i].pin);
+            ESP_LOGE(TAG, "GPIO%d init failed", gpios[i].pin);
             return false;
         }
-        ESP_LOGI("GPIO", "GPIO%d initialized", gpios[i].pin);
+        ESP_LOGI(TAG, "GPIO%d initialized", gpios[i].pin);
     }
     return true;
 }
