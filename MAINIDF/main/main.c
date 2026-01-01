@@ -3,6 +3,13 @@
 #include "demos/lv_demos.h"
 #include "esp_littlefs.h"
 #include "driver/gpio.h"
+#include "basic/hardware/hw_key.h"
+
+// 按键GPIO定义
+#define BOOT_KEY_GPIO     GPIO_NUM_0   // 左上方按键
+#define HOME_KEY_GPIO     GPIO_NUM_39  // 右上方按键
+#define KEY_PRESS_LEVEL   1            // 按键按下时的电平（高电平）
+
 
 static void init_littlefs(void)
 {
@@ -37,6 +44,10 @@ static void init_littlefs(void)
 bool init_gpio(void)
 {
     static const char *TAG = "GPIO";
+    
+    // 安装GPIO ISR服务
+    gpio_install_isr_service(0);
+    
     typedef struct {
         int pin;
         gpio_mode_t mode;
@@ -45,7 +56,9 @@ bool init_gpio(void)
         gpio_int_type_t intr_type;
     } gpio_init_t;
     gpio_init_t gpios[] = {
-        {40, GPIO_MODE_OUTPUT, GPIO_PULLUP_DISABLE, GPIO_PULLDOWN_DISABLE, GPUI_INTR_DISABLE},  // 电源控制
+        {40, GPIO_MODE_OUTPUT, GPIO_PULLUP_DISABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_DISABLE},  // 电源控制
+        {0, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_ANYEDGE},    // BOOT按键 (GPIO0)
+        {39, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_ANYEDGE},   // HOME按键 (GPIO39)
     };
 
     gpio_config_t io_conf = {0}; // 初始化为0
@@ -61,14 +74,35 @@ bool init_gpio(void)
         }
         ESP_LOGI(TAG, "GPIO%d initialized", gpios[i].pin);
     }
+    
     return true;
+}
+
+static void key_event_handler(int gpio, key_event_t evt, void* arg)
+{
+    if (evt == KEY_EVT_PRESS) {
+        ESP_LOGI("KEY", "GPIO%d pressed", gpio);
+    } else {
+        ESP_LOGI("KEY", "GPIO%d released", gpio);
+    }
 }
 
 void app_main(void)
 {
     init_gpio();
-    gpio_set_level(40, (uint32_t)sta); // 打开电源
+    gpio_set_level(40, 1); // 打开电源
     bsp_i2c_init();   // I2C初始化
+
+    // 初始化按键模块并注册回调
+    if (!hw_key_init()) {
+        ESP_LOGE("KEY", "Key module init failed");
+    } else {
+        hw_key_add(BOOT_KEY_GPIO, KEY_PRESS_LEVEL);
+        hw_key_add(HOME_KEY_GPIO, KEY_PRESS_LEVEL);
+        hw_key_register_callback(BOOT_KEY_GPIO, key_event_handler, NULL);
+        hw_key_register_callback(HOME_KEY_GPIO, key_event_handler, NULL);
+    }
+
     init_littlefs();  // 初始化文件系统
     bsp_lvgl_start(); // 初始化液晶屏lvgl接口
 
