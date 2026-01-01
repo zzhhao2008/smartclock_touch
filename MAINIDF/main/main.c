@@ -9,32 +9,31 @@ static void init_littlefs(void)
     const esp_vfs_littlefs_conf_t conf = {
         .base_path = "/littlefs",
         .partition_label = "storage",
-        .format_if_mount_failed = true};
+        .format_if_mount_failed = true
+    };
 
     esp_err_t ret = esp_vfs_littlefs_register(&conf);
     if (ret != ESP_OK)
     {
         if (ret == ESP_FAIL)
         {
-            ESP_LOGE("littlefs", "Failed to mount or format filesystem");
+            ESP_LOGE("littlefs", "Failed to mount or format filesystem.");
         }
         else if (ret == ESP_ERR_NOT_FOUND)
         {
-            ESP_LOGE("littlefs", "Failed to find littlefs partition");
+            ESP_LOGE("littlefs", "Failed to find littlefs partition.");
         }
         else
         {
-            ESP_LOGE("littlefs", "Failed to initialize littlefs (%s)", esp_err_to_name(ret));
+            ESP_LOGE("littlefs", "Failed to initialize littlefs (%s).", esp_err_to_name(ret));
         }
         return;
     }
 
     size_t total = 0, used = 0;
     esp_littlefs_info("storage", &total, &used);
-    ESP_LOGI("littlefs", "Partition size: total: %d, used: %d", total, used);
+    ESP_LOGI("littlefs", "Partition size: total: %d, used: %d.", total, used);
 }
-
-#include "driver/gpio.h"
 
 bool power_acc(bool sta)
 {
