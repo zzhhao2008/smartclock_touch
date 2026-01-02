@@ -6,3 +6,5 @@ TOUCH-IDF/dependencies.lock
 /MAINIDF/build
 /MAINIDF/managed_components
 .vscode/
+/jlc_lvgldemo/09-wifi_scan_connect/build
+/jlc_lvgldemo/09-wifi_scan_connect/managed_components
