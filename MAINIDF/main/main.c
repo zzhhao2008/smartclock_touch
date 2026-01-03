@@ -126,19 +126,6 @@ static void key_event_handler(int gpio, key_event_t evt, void *arg)
  * 因此可执行相对复杂的操作（但仍应避免长时间阻塞以影响其他任务）。
  */
 
-void task_adc(void *arg)
-{
-    float bat_voltage, bat_percent, usb_voltage;
-    bool charging;
-
-    while (1)
-    {
-        // 读取并处理数据
-        bat_voltage = read_bat_percentage();
-        usb_voltage = read_usb_voltage();
-        vTaskDelay(pdMS_TO_TICKS(500));
-    }
-}
 void app_main(void)
 {
     init_gpio();
@@ -178,6 +165,4 @@ void app_main(void)
     bsp_lvgl_start(); // 初始化液晶屏lvgl接口
 
     app_wifi_connect(); // 运行wifi连接程序
-
-    xTaskCreate(task_adc, "task_adc", 4096, NULL, 2, NULL);
 }

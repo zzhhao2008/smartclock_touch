@@ -131,7 +131,7 @@ float read_bat_voltage(void)
         voltage = (raw * 3300) / 4095;
     }
     
-    ESP_LOGI(TAG, "BAT raw: %d, voltage: %d mV", raw, voltage);
+    ESP_LOGD(TAG, "BAT raw: %d, voltage: %d mV", raw, voltage);
     return voltage / 1000.0f / OUTER_ATTEN_RATE;
 }
 
@@ -173,7 +173,7 @@ float read_usb_voltage(void)
         voltage = (raw * 3300) / 4095;
     }
     
-    ESP_LOGI(TAG, "USB raw: %d, voltage: %d mV", raw, voltage);
+    ESP_LOGD(TAG, "USB raw: %d, voltage: %d mV", raw, voltage);
     return voltage / 1000.0f / OUTER_ATTEN_RATE;
 }
 
