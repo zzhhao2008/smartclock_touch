@@ -73,8 +73,10 @@ bool init_gpio(void)
     } gpio_init_t;
     gpio_init_t gpios[] = {
         {40, GPIO_MODE_OUTPUT, GPIO_PULLUP_DISABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_DISABLE}, // 电源控制
+        {42, GPIO_MODE_OUTPUT, GPIO_PULLUP_DISABLE, GPIO_PULLDOWN_ENABLE, GPIO_INTR_DISABLE}, // 蜂鸣器控制 - 新增
         {0, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_ANYEDGE},    // BOOT按键 (GPIO0)
         {39, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_ANYEDGE},   // HOME按键 (GPIO39)
+        {41, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_DISABLE},   // 充电检测
     };
 
     gpio_config_t io_conf = {0}; // 初始化为0
@@ -147,9 +149,6 @@ void task_adc(void *arg)
             ESP_LOGW(TAG, "Low battery voltage: %.2fV", bat_voltage);
         }
 
-        // 喂狗防止复位
-        esp_task_wdt_reset();
-
         // 电池监控可以5秒一次，充电状态可以1秒一次
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
@@ -158,7 +157,7 @@ void app_main(void)
 {
     init_gpio();
     ACC(1);         // 使能电源
-    bsp_i2c_init(); // I2C初始化
+    bsp_i2c_init();        // I2C初始化
     init_adc();
 
     // 初始化按键模块并注册回调
@@ -175,8 +174,8 @@ void app_main(void)
     }
 
     beep_init(); // 初始化蜂鸣器
-
-    play_note_async(600,200); // 播放启动音
+    ACC(1);
+    play_note_async(1000, 2000); // 播放启动音
 
     init_littlefs(); // 初始化文件系统
     init_nvs();
@@ -184,5 +183,5 @@ void app_main(void)
 
     app_wifi_connect(); // 运行wifi连接程序
 
-    xTaskCreate(task_adc, "task_adc", 2048, NULL, 5, NULL);
+    xTaskCreate(task_adc, "task_adc", 4096, NULL, 2, NULL);
 }

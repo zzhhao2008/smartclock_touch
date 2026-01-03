@@ -22,7 +22,11 @@ static adc_cali_handle_t adc_cali_handle = NULL;
 
 void ACC(int level)
 {
-    gpio_set_level(ACC_PIN, level);
+    esp_err_t ret = gpio_set_level(ACC_PIN, level);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set level for ACC pin");
+        return ;
+    }
     ESP_LOGI(TAG, "ACC: %d", level);
 }
 
