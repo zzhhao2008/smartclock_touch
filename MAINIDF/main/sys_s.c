@@ -184,3 +184,32 @@ esp_err_t sys_write_file(const char* path, const char* content)
     
     return ESP_OK;
 }
+
+/** 删除文件
+ * @param path 文件路径
+ * @return esp_err_t 操作结果
+ */
+esp_err_t sys_delete_file(const char* path)
+{
+    struct stat st;
+    if (stat(path, &st) == 0) {
+        if (unlink(path) == 0) {
+            ESP_LOGI(TAG, "Deleted: %s", path);
+        } else {
+            ESP_LOGE(TAG, "Failed to delete %s, errno=%d (%s)",
+                    path, errno, strerror(errno));
+            return ESP_FAIL;
+        }
+    } else {
+        if (errno == ENOENT) {
+            ESP_LOGE(TAG, "Path does not exist: %s", path);
+            return ESP_FAIL;
+        } else {
+            ESP_LOGE(TAG, "stat() failed for %s, errno=%d (%s)",
+                    path, errno, strerror(errno));
+            return ESP_FAIL;
+        }
+    }
+
+    return ESP_OK;
+}
