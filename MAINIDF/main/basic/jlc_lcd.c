@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "jlc_lcd.h"
 
-
 static const char *TAG = "LCDI";
 
 /******************************************************************************/
@@ -14,8 +13,7 @@ esp_err_t bsp_i2c_init(void)
         .sda_pullup_en = GPIO_PULLUP_ENABLE,
         .scl_io_num = BSP_I2C_SCL,
         .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = BSP_I2C_FREQ_HZ
-    };
+        .master.clk_speed = BSP_I2C_FREQ_HZ};
     i2c_param_config(BSP_I2C_NUM, &i2c_conf);
 
     return i2c_driver_install(BSP_I2C_NUM, i2c_conf.mode, 0, 0, 0);
@@ -38,28 +36,32 @@ esp_err_t bsp_display_brightness_init(void)
         .timer_sel = 0,
         .duty = 0,
         .hpoint = 0,
-        .flags.output_invert = false
-    };
+        .flags.output_invert = false};
     const ledc_timer_config_t LCD_backlight_timer = {
         .speed_mode = LEDC_LOW_SPEED_MODE,
-        .duty_resolution = LEDC_TIMER_10_BIT,
+        .duty_resolution = LEDC_TIMER_10_BIT, // 10位分辨率，1024级亮度
         .timer_num = 0,
         .freq_hz = 5000,
-        .clk_cfg = LEDC_AUTO_CLK
-    };
+        .clk_cfg = LEDC_AUTO_CLK};
 
     ESP_ERROR_CHECK(ledc_timer_config(&LCD_backlight_timer));
     ESP_ERROR_CHECK(ledc_channel_config(&LCD_backlight_channel));
 
+    // 安装LEDC渐变功能，这个函数会占用LEDC模块的中断
+    ESP_ERROR_CHECK(ledc_fade_func_install(0));
+
     return ESP_OK;
 }
 
-// 背光亮度设置
+// 背光亮度设置（立即生效）
 esp_err_t bsp_display_brightness_set(int brightness_percent)
 {
-    if (brightness_percent > 100) {
+    if (brightness_percent > 100)
+    {
         brightness_percent = 100;
-    } else if (brightness_percent < 0) {
+    }
+    else if (brightness_percent < 0)
+    {
         brightness_percent = 0;
     }
 
@@ -72,23 +74,63 @@ esp_err_t bsp_display_brightness_set(int brightness_percent)
     return ESP_OK;
 }
 
+// 背光亮度渐变设置（平滑过渡）
+esp_err_t bsp_display_brightness_fade(int target_brightness_percent, int fade_time_ms)
+{
+    if (fade_time_ms <= 0)
+    {
+        fade_time_ms = LCD_FADE_TIME_MS; // 使用默认渐变时间
+    }
+
+    if (target_brightness_percent > 100)
+    {
+        target_brightness_percent = 100;
+    }
+    else if (target_brightness_percent < 0)
+    {
+        target_brightness_percent = 0;
+    }
+
+    ESP_LOGI(TAG, "Fading LCD backlight to: %d%% over %dms", target_brightness_percent, fade_time_ms);
+
+    // 计算目标占空比 (10位分辨率 = 1023)
+    uint32_t target_duty = (1023 * target_brightness_percent) / 100;
+
+    // 设置渐变参数
+    ESP_ERROR_CHECK(ledc_set_fade_with_time(
+        LEDC_LOW_SPEED_MODE, // speed_mode
+        LCD_LEDC_CH,         // channel
+        target_duty,         // target_duty
+        fade_time_ms         // max_fade_time_ms
+        ));
+
+    // 启动渐变
+    ESP_ERROR_CHECK(ledc_fade_start(
+        LEDC_LOW_SPEED_MODE, // speed_mode
+        LCD_LEDC_CH,         // channel
+        LCD_FADE_MODE        // fade_mode
+        ));
+
+    return ESP_OK;
+}
+
 // 关闭背光
 esp_err_t bsp_display_backlight_off(void)
 {
-    return bsp_display_brightness_set(0);
+    return bsp_display_brightness_fade(0,LCD_FADE_TIME_MS);
 }
 
 // 打开背光 最亮
 esp_err_t bsp_display_backlight_on(void)
 {
-    return bsp_display_brightness_set(100);
+    return bsp_display_brightness_fade(100, LCD_FADE_TIME_MS);
 }
 
 // 定义液晶屏句柄
 static esp_lcd_panel_handle_t panel_handle = NULL;
-esp_lcd_panel_io_handle_t io_handle = NULL; 
-static esp_lcd_touch_handle_t tp;   // 触摸屏句柄
-static lv_disp_t *disp;      // 指向液晶屏
+esp_lcd_panel_io_handle_t io_handle = NULL;
+static esp_lcd_touch_handle_t tp;     // 触摸屏句柄
+static lv_disp_t *disp;               // 指向液晶屏
 static lv_indev_t *disp_indev = NULL; // 指向触摸屏
 
 // 液晶屏初始化
@@ -128,20 +170,22 @@ esp_err_t bsp_display_new(void)
         .bits_per_pixel = BSP_LCD_BITS_PER_PIXEL,
     };
     ESP_GOTO_ON_ERROR(esp_lcd_new_panel_st7789(io_handle, &panel_config, &panel_handle), err, TAG, "New panel failed");
-    
-    esp_lcd_panel_reset(panel_handle);  // 液晶屏复位
-    esp_lcd_panel_init(panel_handle);  // 初始化配置寄存器
-    esp_lcd_panel_invert_color(panel_handle, true); // 颜色反转
-    esp_lcd_panel_swap_xy(panel_handle, true);  // 显示翻转 
+
+    esp_lcd_panel_reset(panel_handle);               // 液晶屏复位
+    esp_lcd_panel_init(panel_handle);                // 初始化配置寄存器
+    esp_lcd_panel_invert_color(panel_handle, true);  // 颜色反转
+    esp_lcd_panel_swap_xy(panel_handle, true);       // 显示翻转
     esp_lcd_panel_mirror(panel_handle, false, true); // 镜像
 
     return ret;
 
 err:
-    if (panel_handle) {
+    if (panel_handle)
+    {
         esp_lcd_panel_del(panel_handle);
     }
-    if (io_handle) {
+    if (io_handle)
+    {
         esp_lcd_panel_io_del(io_handle);
     }
     spi_bus_free(BSP_LCD_SPI_NUM);
@@ -153,21 +197,20 @@ esp_err_t bsp_lcd_init(void)
 {
     esp_err_t ret = ESP_OK;
 
-    
-    ret = bsp_display_new(); // 液晶屏驱动初始化
-    lcd_set_color(0x0000); // 设置整屏背景黑色
+    ret = bsp_display_new();                             // 液晶屏驱动初始化
+    lcd_set_color(0x0000);                               // 设置整屏背景黑色
     ret = esp_lcd_panel_disp_on_off(panel_handle, true); // 打开液晶屏显示
-    ret = bsp_display_backlight_on(); // 打开背光显示
+    ret = bsp_display_backlight_on();                    // 打开背光显示
 
-    return  ret;
+    return ret;
 }
 
 // 液晶屏初始化+添加LVGL接口
 static lv_disp_t *bsp_display_lcd_init(void)
 {
     /* 初始化液晶屏 */
-    bsp_display_new(); // 液晶屏驱动初始化
-    lcd_set_color(0xffff); // 设置整屏背景白色
+    bsp_display_new();                             // 液晶屏驱动初始化
+    lcd_set_color(0xffff);                         // 设置整屏背景白色
     esp_lcd_panel_disp_on_off(panel_handle, true); // 打开液晶屏显示
 
     /* 液晶屏添加LVGL接口 */
@@ -175,22 +218,21 @@ static lv_disp_t *bsp_display_lcd_init(void)
     const lvgl_port_display_cfg_t disp_cfg = {
         .io_handle = io_handle,
         .panel_handle = panel_handle,
-        .buffer_size = BSP_LCD_H_RES * BSP_LCD_DRAW_BUF_HEIGHT,   // LVGL缓存大小 
-        .double_buffer = false, // 是否开启双缓存
-        .hres = BSP_LCD_H_RES, // 液晶屏的宽
-        .vres = BSP_LCD_V_RES, // 液晶屏的高
-        .monochrome = false,  // 是否单色显示器
+        .buffer_size = BSP_LCD_H_RES * BSP_LCD_DRAW_BUF_HEIGHT, // LVGL缓存大小
+        .double_buffer = false,                                 // 是否开启双缓存
+        .hres = BSP_LCD_H_RES,                                  // 液晶屏的宽
+        .vres = BSP_LCD_V_RES,                                  // 液晶屏的高
+        .monochrome = false,                                    // 是否单色显示器
         /* Rotation的值必须和液晶屏初始化里面设置的 翻转 和 镜像 一样 */
         .rotation = {
-            .swap_xy = true,  // 是否翻转
-            .mirror_x = true, // x方向是否镜像
+            .swap_xy = true,   // 是否翻转
+            .mirror_x = true,  // x方向是否镜像
             .mirror_y = false, // y方向是否镜像
         },
         .flags = {
-            .buff_dma = false,  // 是否使用DMA 注意：dma与spiram不能同时为true
+            .buff_dma = false,   // 是否使用DMA 注意：dma与spiram不能同时为true
             .buff_spiram = true, // 是否使用PSRAM 注意：dma与spiram不能同时为true
-        }
-    };
+        }};
 
     return lvgl_port_add_disp(&disp_cfg);
 }
@@ -203,7 +245,7 @@ esp_err_t bsp_touch_new(esp_lcd_touch_handle_t *ret_touch)
         .x_max = BSP_LCD_V_RES,
         .y_max = BSP_LCD_H_RES,
         .rst_gpio_num = GPIO_NUM_NC, // Shared with LCD reset
-        .int_gpio_num = GPIO_NUM_NC, 
+        .int_gpio_num = GPIO_NUM_NC,
         .levels = {
             .reset = 0,
             .interrupt = 0,
@@ -254,23 +296,22 @@ void bsp_lvgl_start(void)
 
     /* 打开液晶屏背光 */
     bsp_display_backlight_on();
-
 }
 
 // 显示图片
 void lcd_draw_pictrue(int x_start, int y_start, int x_end, int y_end, const unsigned char *gImage)
 {
     // 分配内存 分配了需要的字节大小 且指定在外部SPIRAM中分配
-    size_t pixels_byte_size = (x_end - x_start)*(y_end - y_start) * 2;
+    size_t pixels_byte_size = (x_end - x_start) * (y_end - y_start) * 2;
     uint16_t *pixels = (uint16_t *)heap_caps_malloc(pixels_byte_size, MALLOC_CAP_8BIT | MALLOC_CAP_SPIRAM);
     if (NULL == pixels)
     {
         ESP_LOGE(TAG, "Memory for bitmap is not enough");
         return;
     }
-    memcpy(pixels, gImage, pixels_byte_size);  // 把图片数据拷贝到内存
+    memcpy(pixels, gImage, pixels_byte_size);                                                    // 把图片数据拷贝到内存
     esp_lcd_panel_draw_bitmap(panel_handle, x_start, y_start, x_end, y_end, (uint16_t *)pixels); // 显示整张图片数据
-    heap_caps_free(pixels);  // 释放内存
+    heap_caps_free(pixels);                                                                      // 释放内存
 }
 
 // 设置液晶屏颜色
@@ -278,7 +319,7 @@ void lcd_set_color(uint16_t color)
 {
     // 分配内存 这里分配了液晶屏一行数据需要的大小
     uint16_t *buffer = (uint16_t *)heap_caps_malloc(BSP_LCD_H_RES * sizeof(uint16_t), MALLOC_CAP_8BIT | MALLOC_CAP_SPIRAM);
-    
+
     if (NULL == buffer)
     {
         ESP_LOGE(TAG, "Memory for bitmap is not enough");
@@ -291,7 +332,7 @@ void lcd_set_color(uint16_t color)
         }
         for (int y = 0; y < 240; y++) // 显示整屏颜色
         {
-            esp_lcd_panel_draw_bitmap(panel_handle, 0, y, 320, y+1, buffer);
+            esp_lcd_panel_draw_bitmap(panel_handle, 0, y, 320, y + 1, buffer);
         }
         free(buffer); // 释放内存
     }

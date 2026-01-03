@@ -50,8 +50,12 @@ esp_err_t bsp_i2c_init(void); // 初始化I2C接口
 
 #define BSP_LCD_DRAW_BUF_HEIGHT (20)
 
+#define LCD_FADE_TIME_MS 500            // 默认渐变时间500ms
+#define LCD_FADE_MODE LEDC_FADE_NO_WAIT // 非阻塞模式
+
 esp_err_t bsp_display_brightness_init(void);
 esp_err_t bsp_display_brightness_set(int brightness_percent);
+esp_err_t bsp_display_brightness_fade(int target_brightness_percent, int fade_time_ms);
 esp_err_t bsp_display_backlight_off(void);
 esp_err_t bsp_display_backlight_on(void);
 esp_err_t bsp_lcd_init(void);

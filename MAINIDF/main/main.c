@@ -10,6 +10,9 @@
 #include "esp_log.h"
 #include "esp_task_wdt.h"
 #include "basic/beepdrive.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/queue.h"
 
 static const char *TAG = "MAPP";
 struct key_log
@@ -36,6 +39,32 @@ typedef struct key_log key_log_t;
 #define HOME_KEY_GPIO GPIO_NUM_0 // 左上方按键
 #define PW_KEY_GPIO GPIO_NUM_39  // 右上方按键
 #define KEY_PRESS_LEVEL 1        // 按键按下时的电平（高电平）
+
+// 消息类型定义
+typedef enum
+{
+    SYS_MSG_SCREEN_ON,
+    SYS_MSG_SCREEN_OFF,
+    SYS_MSG_SET_BRIGHTNESS,
+    SYS_MSG_POWER_OFF,
+    SYS_MSG_WIFI_CONNECT,
+    SYS_MSG_WIFI_DISCONNECT
+} system_message_type_t;
+
+// 消息结构体
+typedef struct
+{
+    system_message_type_t type;
+    int param; // 用于传递参数，如亮度值
+} system_message_t;
+
+// 全局消息队列句柄
+static QueueHandle_t system_message_queue = NULL;
+
+// 系统任务堆栈大小
+#define SYSTEM_TASK_STACK_SIZE 4096
+#define SYSTEM_TASK_PRIORITY 5
+
 void init_littlefs(void)
 {
     const esp_vfs_littlefs_conf_t conf = {
@@ -74,6 +103,7 @@ void init_nvs(void)
     }
     ESP_ERROR_CHECK(ret);
 }
+
 bool init_gpio(void)
 {
     static const char *TAG = "GPIO";
@@ -94,6 +124,7 @@ bool init_gpio(void)
         {0, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_ANYEDGE},    // BOOT按键 (GPIO0)
         {39, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_ANYEDGE},   // HOME按键 (GPIO39)
         {41, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_DISABLE},   // 充电检测
+        {8, GPIO_MODE_OUTPUT, GPIO_PULLUP_DISABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_DISABLE},  // 背光控制 (BL)
     };
 
     gpio_config_t io_conf = {0}; // 初始化为0
@@ -110,10 +141,91 @@ bool init_gpio(void)
             return false;
         }
         ESP_LOGI(TAG, "GPIO%d initialized", gpios[i].pin);
+
+        // 初始化背光为开启状态
+        if (gpios[i].pin == 8)
+        {
+            gpio_set_level(8, 1);
+            sys_status.screen_on = true;
+            sys_status.screen_brightness = 100; // 默认100%亮度
+        }
     }
 
     return true;
 }
+
+/**
+ * 系统消息处理任务
+ */
+void system_message_task(void *pvParameters)
+{
+    system_message_t msg;
+
+    ESP_LOGI(TAG, "System message task started");
+
+    while (1)
+    {
+        // 等待接收消息，超时时间为 portMAX_DELAY（永久等待）
+        if (xQueueReceive(system_message_queue, &msg, portMAX_DELAY) == pdTRUE)
+        {
+            ESP_LOGI(TAG, "Received message type: %d, param: %d", msg.type, msg.param);
+
+            switch (msg.type)
+            {
+            case SYS_MSG_SCREEN_ON:
+                ESP_LOGI(TAG, "Processing: Turn screen ON");
+                bsp_display_brightness_fade(sys_status.screen_brightness,LCD_FADE_TIME_MS); // 恢复到默认亮度
+                sys_status.screen_on = true;
+                break;
+
+            case SYS_MSG_SCREEN_OFF:
+                ESP_LOGI(TAG, "Processing: Turn screen OFF");
+                bsp_display_backlight_off();
+                sys_status.screen_on = false;
+                break;
+
+            case SYS_MSG_SET_BRIGHTNESS:
+                ESP_LOGI(TAG, "Processing: Set brightness to %d", msg.param);
+                bsp_display_brightness_fade(msg.param,LCD_FADE_TIME_MS);
+                sys_status.screen_brightness = msg.param;
+                break;
+
+            case SYS_MSG_POWER_OFF:
+                ESP_LOGI(TAG, "Processing: Power off system");
+                ACC(0); // 关闭电源
+                break;
+            default:
+                ESP_LOGW(TAG, "Unknown message type: %d", msg.type);
+                break;
+            }
+        }
+    }
+}
+
+/**
+ * 发送系统消息
+ */
+esp_err_t send_system_message(system_message_type_t type, int param)
+{
+    if (system_message_queue == NULL)
+    {
+        ESP_LOGE(TAG, "Message queue not initialized");
+        return ESP_FAIL;
+    }
+
+    system_message_t msg = {
+        .type = type,
+        .param = param};
+
+    if (xQueueSend(system_message_queue, &msg, pdMS_TO_TICKS(100)) != pdPASS)
+    {
+        ESP_LOGE(TAG, "Failed to send message to queue");
+        return ESP_FAIL;
+    }
+
+    return ESP_OK;
+}
+
 /**
  * 默认按键事件回调：
  * - evt == KEY_EVT_PRESS  表示按下事件
@@ -140,21 +252,47 @@ void key_event_handler(int gpio, key_event_t evt, void *arg)
         TickType_t releasetime = xTaskGetTickCount();
         TickType_t duration = releasetime - PW_KEY_LOG.presstime;
 
-        if (duration >= pdMS_TO_TICKS(10000)) // 长按3秒以上
+        if (duration >= pdMS_TO_TICKS(10000)) // 长按10秒以上关机
         {
             ESP_LOGI("KEY", "Power off triggered by long press");
-            ACC(0); // 关闭电源
-        }else{
-            if(sys_status.screen_on){
-                sys_status.screen_on = false;
-                ESP_LOGI("KEY", "Screen turned off");
-                //bsp_display_backlight_off();
-            }else{
-                sys_status.screen_on = true;
-                ESP_LOGI("KEY", "Screen turned on");
-                //bsp_display_backlight_on();
+            send_system_message(SYS_MSG_POWER_OFF, 0);
+        }
+        else if (duration >= pdMS_TO_TICKS(3000)) // 长按3秒以上调整亮度
+        {
+            ESP_LOGI("KEY", "Adjust brightness triggered");
+            // 亮度循环：100% -> 50% -> 25% -> 100%
+            int new_brightness;
+            if (sys_status.screen_brightness == 100)
+            {
+                new_brightness = 50;
+            }
+            else if (sys_status.screen_brightness == 50)
+            {
+                new_brightness = 25;
+            }
+            else
+            {
+                new_brightness = 100;
+            }
+            send_system_message(SYS_MSG_SET_BRIGHTNESS, new_brightness);
+        }
+        else // 短按切换屏幕开关
+        {
+            if (sys_status.screen_on)
+            {
+                send_system_message(SYS_MSG_SCREEN_OFF, 0);
+            }
+            else
+            {
+                send_system_message(SYS_MSG_SCREEN_ON, 0);
             }
         }
+    }
+
+    if (gpio == HOME_KEY_GPIO && evt == KEY_EVT_PRESS)
+    {
+        ESP_LOGI("KEY", "HOME key pressed - WiFi connect");
+        send_system_message(SYS_MSG_WIFI_CONNECT, 0);
     }
 }
 
@@ -166,6 +304,26 @@ void default_key_cbReg()
 
 void app_main(void)
 {
+    // 初始化系统状态
+    sys_status.wifi_connected = false;
+    sys_status.charger_connected = false;
+    sys_status.battery_charging = false;
+    sys_status.battery_voltage = 0.0f;
+    sys_status.battery_percentage = 0.0f;
+    sys_status.usb_voltage = 0.0f;
+    sys_status.is_charging = false;
+    sys_status.screen_brightness = 100;
+    sys_status.screen_on = true;
+
+    // 创建系统消息队列
+    system_message_queue = xQueueCreate(10, sizeof(system_message_t));
+    if (system_message_queue == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to create message queue");
+        return;
+    }
+
+    // 初始化GPIO
     init_gpio();
     ACC(1);         // 使能电源
     bsp_i2c_init(); // I2C初始化
@@ -190,7 +348,7 @@ void app_main(void)
     vTaskDelay(pdMS_TO_TICKS(10)); // 稍等一下确保初始化完成
 
     ESP_LOGI(TAG, "Playing startup sound...");
-    esp_err_t result = play_note_async(1500, 200); // 播放启动音，1kHz，持续500ms
+    esp_err_t result = play_note_async(1500, 200); // 播放启动音，1500Hz，持续200ms
     if (result != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to play startup sound: %s", esp_err_to_name(result));
@@ -204,5 +362,8 @@ void app_main(void)
     init_nvs();
     bsp_lvgl_start(); // 初始化液晶屏lvgl接口
 
-    app_wifi_connect(); // 运行wifi连接程序
+    // 创建系统消息处理任务
+    xTaskCreate(system_message_task, "sys_msg_task", SYSTEM_TASK_STACK_SIZE, NULL, SYSTEM_TASK_PRIORITY, NULL);
+
+    app_wifi_connect();
 }
