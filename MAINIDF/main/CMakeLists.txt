@@ -7,6 +7,7 @@ INCLUDE_DIRS
     "." 
     "basic" 
     "fonts"
+    "ui"
 REQUIRES 
     littlefs 
     nvs_flash 
