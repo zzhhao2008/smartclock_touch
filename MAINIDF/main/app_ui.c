@@ -3,6 +3,7 @@
 #include "esp_wifi.h"
 #include "freertos/event_groups.h"
 #include "esp_event.h"
+#include "fonts/siyuan_20.c"
 
 
 static const char *TAG = "app_ui";
@@ -150,7 +151,7 @@ static void lv_wifi_connect(void)
     // 绘制label提示
     label_wifi_connect = lv_label_create(wifi_connect_page);
     lv_label_set_text(label_wifi_connect, "WLAN连接中...");
-    lv_obj_set_style_text_font(label_wifi_connect, &font_alipuhui20, 0);
+    lv_obj_set_style_text_font(label_wifi_connect, &siyuan_20, 0);
     lv_obj_align(label_wifi_connect, LV_ALIGN_CENTER, 0, -50);
 }
 
@@ -236,7 +237,7 @@ static void list_btn_cb(lv_event_t * e)
 
     // 显示选中的wifi名称
     label_wifi_name = lv_label_create(wifi_password_page);
-    lv_obj_set_style_text_font(label_wifi_name, &font_alipuhui20, 0);
+    lv_obj_set_style_text_font(label_wifi_name, &siyuan_20, 0);
     lv_label_set_text(label_wifi_name, wifi_name);
     lv_obj_align(label_wifi_name, LV_ALIGN_TOP_MID, 0, 10);
 
@@ -496,7 +497,7 @@ void app_wifi_connect(void)
     // 在WLAN扫描页面显示提示
     lv_obj_t *label_wifi_scan = lv_label_create(wifi_scan_page);
     lv_label_set_text(label_wifi_scan, "WLAN扫描中...");
-    lv_obj_set_style_text_font(label_wifi_scan, &font_alipuhui20, 0);
+    lv_obj_set_style_text_font(label_wifi_scan, &siyuan_20, 0);
     lv_obj_align(label_wifi_scan, LV_ALIGN_CENTER, 0, -50);
     lvgl_port_unlock();
 
@@ -512,7 +513,7 @@ void app_wifi_connect(void)
     wifi_list = lv_list_create(wifi_scan_page);
     lv_obj_set_size(wifi_list, lv_pct(100), lv_pct(100));
     lv_obj_set_style_border_width(wifi_list, 0, 0);
-    lv_obj_set_style_text_font(wifi_list, &font_alipuhui20, 0);
+    lv_obj_set_style_text_font(wifi_list, &siyuan_20, 0);
     lv_obj_set_scrollbar_mode(wifi_list, LV_SCROLLBAR_MODE_OFF); // 隐藏wifi_list滚动条
     // 显示wifi信息
     lv_obj_t * btn;

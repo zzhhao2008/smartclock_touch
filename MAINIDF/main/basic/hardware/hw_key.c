@@ -24,7 +24,7 @@
 #include "esp_err.h"
 #include <string.h>
 
-#define TAG "HW_KEY"
+static const char *TAG = "HWKEY";
 
 /* 最大同时管理的按键数量，可按需调整 */
 #define MAX_KEYS 4

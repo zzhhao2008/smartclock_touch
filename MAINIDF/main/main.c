@@ -7,6 +7,11 @@
 #include "basic/pm.h"
 #include "nvs_flash.h"
 #include "app_ui.h"
+#include "esp_log.h"
+#include "esp_task_wdt.h"
+#include "basic/beepdrive.h"
+
+static const char *TAG = "MAPP";
 
 // 按键GPIO定义
 #define BOOT_KEY_GPIO GPIO_NUM_0  // 左上方按键
@@ -15,7 +20,6 @@
 
 static void init_littlefs(void)
 {
-    static const char *TAG = "LittleFS";
     const esp_vfs_littlefs_conf_t conf = {
         .base_path = "/littlefs",
         .partition_label = "storage",
@@ -121,11 +125,41 @@ static void key_event_handler(int gpio, key_event_t evt, void *arg)
  * 因此可执行相对复杂的操作（但仍应避免长时间阻塞以影响其他任务）。
  */
 
+void task_adc(void *arg)
+{
+    float bat_voltage, bat_percent, usb_voltage;
+    bool charging;
+
+    while (1)
+    {
+        // 读取并处理数据
+        bat_voltage = read_bat_voltage();
+        bat_percent = read_bat_percentage();
+        usb_voltage = read_usb_voltage();
+        charging = is_charging();
+
+        // 可以将数据发送到其他任务或更新UI
+        // xQueueSend(bat_queue, &bat_percent, 0);
+
+        // 检查电池低电压
+        if (bat_voltage < 3.2f)
+        {
+            ESP_LOGW(TAG, "Low battery voltage: %.2fV", bat_voltage);
+        }
+
+        // 喂狗防止复位
+        esp_task_wdt_reset();
+
+        // 电池监控可以5秒一次，充电状态可以1秒一次
+        vTaskDelay(pdMS_TO_TICKS(5000));
+    }
+}
 void app_main(void)
 {
     init_gpio();
     ACC(1);         // 使能电源
     bsp_i2c_init(); // I2C初始化
+    init_adc();
 
     // 初始化按键模块并注册回调
     if (!hw_key_init())
@@ -140,9 +174,11 @@ void app_main(void)
         hw_key_register_callback(HOME_KEY_GPIO, key_event_handler, NULL);
     }
 
-    init_littlefs();  // 初始化文件系统
+    init_littlefs(); // 初始化文件系统
     init_nvs();
     bsp_lvgl_start(); // 初始化液晶屏lvgl接口
 
     app_wifi_connect(); // 运行wifi连接程序
+
+    xTaskCreate(task_adc, "task_adc", 2048, NULL, 5, NULL);
 }
