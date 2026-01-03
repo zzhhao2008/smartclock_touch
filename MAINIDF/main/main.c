@@ -174,6 +174,10 @@ void app_main(void)
         hw_key_register_callback(HOME_KEY_GPIO, key_event_handler, NULL);
     }
 
+    beep_init(); // 初始化蜂鸣器
+
+    play_note_async(600,200); // 播放启动音
+
     init_littlefs(); // 初始化文件系统
     init_nvs();
     bsp_lvgl_start(); // 初始化液晶屏lvgl接口
