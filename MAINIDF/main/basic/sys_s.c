@@ -1,33 +1,16 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "esp_littlefs.h"
-#include "driver/gpio.h"
-#include "hardware/hw_key.h"
-#include "pm.h"
-#include "nvs_flash.h"
-#include "esp_log.h"
-#include "esp_task_wdt.h"
-#include "beepdrive.h"
-#include "nvs.h"
-#include "esp_sntp.h"
+#include "sys_s.h"
 
 static const char *TAG = "SYSFC";
 
 /*
-系统操作函数封装
-已初始化littlefs至"/littlefs"
-nvs已初始化
-FOR:
-ESP32S3 N16R8
-ESP-IDF v5.5.1
+    系统操作函数封装
+    已初始化littlefs至"/littlefs"
+    nvs已初始化
+    FOR:
+    ESP32S3 N16R8
+    ESP-IDF v5.5.1
 */
-/**
- * 获取当前UNIX
- * @param none
- * @return uint32_t 当前UNIX时间戳
- */
+
 uint32_t sys_get_unix_time(void)
 {
     time_t now;
@@ -35,12 +18,7 @@ uint32_t sys_get_unix_time(void)
     return (uint32_t)now;
 }
 
-/**
- * 获取当前日期
- * @param format 日期格式
- * @return char* 当前日期字符串
- */
-char* sys_get_date(const char* format)
+char *sys_get_date(const char *format)
 {
     static char date_str[64];
     time_t now;
@@ -53,12 +31,7 @@ char* sys_get_date(const char* format)
     return date_str;
 }
 
-/**
- * NVS获取键值
- * @param key 键
- * @return char* 值字符串
- */
-char* sys_nvs_get(const char* key)
+char *sys_nvs_get(const char *key)
 {
     nvs_handle_t handle;
     static char value[256];
@@ -82,13 +55,7 @@ char* sys_nvs_get(const char* key)
     return value;
 }
 
-/**
- * NVS设置键值
- * @param key 键
- * @param value 值
- * @return esp_err_t 操作结果
- */
-esp_err_t sys_nvs_set(const char* key, const char* value)
+esp_err_t sys_nvs_set(const char *key, const char *value)
 {
     nvs_handle_t handle;
     esp_err_t err;
@@ -115,14 +82,9 @@ esp_err_t sys_nvs_set(const char* key, const char* value)
     return err;
 }
 
-/**
- * 读取文件
- * @param path 文件路径
- * @return char* 文件内容字符串
- */
-char* sys_read_file(const char* path)
+char *sys_read_file(const char *path)
 {
-    FILE* f = fopen(path, "r");
+    FILE *f = fopen(path, "r");
     if (!f) {
         ESP_LOGE(TAG, "Failed to open file %s", path);
         return NULL;
@@ -159,15 +121,9 @@ char* sys_read_file(const char* path)
     return content;
 }
 
-/**
- * 写入文件
- * @param path 文件路径
- * @param content 文件内容
- * @return esp_err_t 操作结果
- */
-esp_err_t sys_write_file(const char* path, const char* content)
+esp_err_t sys_write_file(const char *path, const char *content)
 {
-    FILE* f = fopen(path, "w");
+    FILE *f = fopen(path, "w");
     if (!f) {
         ESP_LOGE(TAG, "Failed to open file %s for writing", path);
         return ESP_FAIL;
@@ -185,11 +141,7 @@ esp_err_t sys_write_file(const char* path, const char* content)
     return ESP_OK;
 }
 
-/** 删除文件
- * @param path 文件路径
- * @return esp_err_t 操作结果
- */
-esp_err_t sys_delete_file(const char* path)
+esp_err_t sys_delete_file(const char *path)
 {
     struct stat st;
     if (stat(path, &st) == 0) {
