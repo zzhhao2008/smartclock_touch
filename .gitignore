@@ -9,3 +9,4 @@ TOUCH-IDF/dependencies.lock
 /jlc_lvgldemo/09-wifi_scan_connect/build
 /jlc_lvgldemo/09-wifi_scan_connect/managed_components
 HARDWARE DOC/~$GPIO.xlsx
+MAINIDF/dependencies.lock
