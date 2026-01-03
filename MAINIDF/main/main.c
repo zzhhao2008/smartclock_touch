@@ -73,7 +73,6 @@ bool init_gpio(void)
     } gpio_init_t;
     gpio_init_t gpios[] = {
         {40, GPIO_MODE_OUTPUT, GPIO_PULLUP_DISABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_DISABLE}, // 电源控制
-        {42, GPIO_MODE_OUTPUT, GPIO_PULLUP_DISABLE, GPIO_PULLDOWN_ENABLE, GPIO_INTR_DISABLE}, // 蜂鸣器控制 - 新增
         {0, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_ANYEDGE},    // BOOT按键 (GPIO0)
         {39, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_ANYEDGE},   // HOME按键 (GPIO39)
         {41, GPIO_MODE_INPUT, GPIO_PULLUP_ENABLE, GPIO_PULLDOWN_DISABLE, GPIO_INTR_DISABLE},   // 充电检测
@@ -173,9 +172,19 @@ void app_main(void)
         hw_key_register_callback(HOME_KEY_GPIO, key_event_handler, NULL);
     }
 
-    beep_init(); // 初始化蜂鸣器
     ACC(1);
-    play_note_async(1000, 2000); // 播放启动音
+
+    ESP_LOGI(TAG, "Initializing buzzer...");
+    beep_init(); // 初始化蜂鸣器
+    vTaskDelay(pdMS_TO_TICKS(10)); // 稍等一下确保初始化完成
+    
+    ESP_LOGI(TAG, "Playing startup sound...");
+    esp_err_t result = play_note_async(1500, 200); // 播放启动音，1kHz，持续500ms
+    if (result != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to play startup sound: %s", esp_err_to_name(result));
+    } else {
+        ESP_LOGI(TAG, "Startup sound played successfully");
+    }
 
     init_littlefs(); // 初始化文件系统
     init_nvs();

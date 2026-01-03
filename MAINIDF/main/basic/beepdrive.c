@@ -12,7 +12,7 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "freertos/semphr.h"
+#include <stdlib.h> // 添加malloc的头文件
 
 #define BEEP_GPIO           42
 #define BEEP_LEDC_CHANNEL   LEDC_CHANNEL_1
@@ -24,7 +24,6 @@
 
 static const char *TAG = "BEEP";
 static bool beep_initialized = false;
-static SemaphoreHandle_t beep_mutex = NULL;
 
 esp_err_t beep_init(void)
 {
@@ -33,12 +32,6 @@ esp_err_t beep_init(void)
         return ESP_OK;
     }
 
-    // 创建互斥锁
-    beep_mutex = xSemaphoreCreateMutex();
-    if (beep_mutex == NULL) {
-        ESP_LOGE(TAG, "Failed to create mutex");
-        return ESP_ERR_NO_MEM;
-    }
 
     ledc_timer_config_t ledc_timer = {
         .speed_mode       = BEEP_LEDC_MODE,
@@ -50,8 +43,6 @@ esp_err_t beep_init(void)
     esp_err_t ret = ledc_timer_config(&ledc_timer);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "ledc_timer_config failed: %s", esp_err_to_name(ret));
-        vSemaphoreDelete(beep_mutex);
-        beep_mutex = NULL;
         return ret;
     }
 
@@ -67,8 +58,6 @@ esp_err_t beep_init(void)
     ret = ledc_channel_config(&ledc_channel);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "ledc_channel_config failed: %s", esp_err_to_name(ret));
-        vSemaphoreDelete(beep_mutex);
-        beep_mutex = NULL;
         return ret;
     }
 
@@ -76,15 +65,11 @@ esp_err_t beep_init(void)
     ret = ledc_set_duty(BEEP_LEDC_MODE, BEEP_LEDC_CHANNEL, 0);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "ledc_set_duty failed: %s", esp_err_to_name(ret));
-        vSemaphoreDelete(beep_mutex);
-        beep_mutex = NULL;
         return ret;
     }
     ret = ledc_update_duty(BEEP_LEDC_MODE, BEEP_LEDC_CHANNEL);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "ledc_update_duty failed: %s", esp_err_to_name(ret));
-        vSemaphoreDelete(beep_mutex);
-        beep_mutex = NULL;
         return ret;
     }
 
@@ -93,97 +78,73 @@ esp_err_t beep_init(void)
     return ESP_OK;
 }
 
-static esp_err_t beep_acquire_mutex(TickType_t wait_ticks)
-{
-    if (beep_mutex == NULL) {
-        return ESP_ERR_INVALID_STATE;
-    }
-    if (xSemaphoreTake(beep_mutex, wait_ticks) != pdTRUE) {
-        return ESP_ERR_TIMEOUT;
-    }
-    return ESP_OK;
-}
-
-static void beep_release_mutex(void)
-{
-    if (beep_mutex != NULL) {
-        xSemaphoreGive(beep_mutex);
-    }
-}
 
 esp_err_t beep_set_freq(uint16_t freq)
 {
     if (!beep_initialized) {
+        ESP_LOGE(TAG, "Buzzer not initialized");
         return ESP_ERR_INVALID_STATE;
     }
 
-    esp_err_t ret = beep_acquire_mutex(pdMS_TO_TICKS(100));
-    if (ret != ESP_OK) {
-        return ret;
+    if (!beep_initialized) {
+        ESP_LOGE(TAG, "Buzzer not initialized");
+        return ESP_ERR_INVALID_STATE;
     }
 
-    do {
-        if (freq < BEEP_LEDC_FREQ_MIN || freq > BEEP_LEDC_FREQ_MAX) {
-            ESP_LOGE(TAG, "Invalid frequency: %d Hz (range: %d-%d Hz)", 
-                    freq, BEEP_LEDC_FREQ_MIN, BEEP_LEDC_FREQ_MAX);
-            ret = ESP_ERR_INVALID_ARG;
-            break;
-        }
-        
-        ret = ledc_set_freq(BEEP_LEDC_MODE, BEEP_LEDC_TIMER, freq);
-        if (ret != ESP_OK) {
-            ESP_LOGE(TAG, "ledc_set_freq failed: %s", esp_err_to_name(ret));
-            break;
-        }
-        
-        ret = ledc_set_duty(BEEP_LEDC_MODE, BEEP_LEDC_CHANNEL, BEEP_LEDC_DUTY);
-        if (ret != ESP_OK) {
-            ESP_LOGE(TAG, "ledc_set_duty failed: %s", esp_err_to_name(ret));
-            break;
-        }
-        
-        ret = ledc_update_duty(BEEP_LEDC_MODE, BEEP_LEDC_CHANNEL);
-        if (ret != ESP_OK) {
-            ESP_LOGE(TAG, "ledc_update_duty failed: %s", esp_err_to_name(ret));
-            break;
-        }
-        
-        ESP_LOGD(TAG, "Beep frequency set to %d Hz", freq);
-    } while (0);
-
-    beep_release_mutex();
-    return ret;
+    if (freq < BEEP_LEDC_FREQ_MIN || freq > BEEP_LEDC_FREQ_MAX) {
+        ESP_LOGE(TAG, "Invalid frequency: %d Hz (range: %d-%d Hz)", 
+                freq, BEEP_LEDC_FREQ_MIN, BEEP_LEDC_FREQ_MAX);
+        return ESP_ERR_INVALID_ARG;
+    }
+    
+    esp_err_t ret = ledc_set_freq(BEEP_LEDC_MODE, BEEP_LEDC_TIMER, freq);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "ledc_set_freq failed: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    
+    ret = ledc_set_duty(BEEP_LEDC_MODE, BEEP_LEDC_CHANNEL, BEEP_LEDC_DUTY);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "ledc_set_duty failed: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    
+    ret = ledc_update_duty(BEEP_LEDC_MODE, BEEP_LEDC_CHANNEL);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "ledc_update_duty failed: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    
+    ESP_LOGD(TAG, "Beep frequency set to %d Hz", freq);
+    return ESP_OK;
 }
 
 esp_err_t beep_stop(void)
 {
     if (!beep_initialized) {
+        ESP_LOGE(TAG, "Buzzer not initialized");
         return ESP_ERR_INVALID_STATE;
     }
 
-    esp_err_t ret = beep_acquire_mutex(pdMS_TO_TICKS(100));
-    if (ret != ESP_OK) {
-        return ret;
+    if (!beep_initialized) {
+        ESP_LOGE(TAG, "Buzzer not initialized");
+        return ESP_ERR_INVALID_STATE;
     }
 
-    do {
-        ret = ledc_set_duty(BEEP_LEDC_MODE, BEEP_LEDC_CHANNEL, 0);
-        if (ret != ESP_OK) {
-            ESP_LOGE(TAG, "ledc_set_duty failed: %s", esp_err_to_name(ret));
-            break;
-        }
-        
-        ret = ledc_update_duty(BEEP_LEDC_MODE, BEEP_LEDC_CHANNEL);
-        if (ret != ESP_OK) {
-            ESP_LOGE(TAG, "ledc_update_duty failed: %s", esp_err_to_name(ret));
-            break;
-        }
-        
-        ESP_LOGD(TAG, "Beep stopped");
-    } while (0);
-
-    beep_release_mutex();
-    return ret;
+    esp_err_t ret = ledc_set_duty(BEEP_LEDC_MODE, BEEP_LEDC_CHANNEL, 0);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "ledc_set_duty failed: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    
+    ret = ledc_update_duty(BEEP_LEDC_MODE, BEEP_LEDC_CHANNEL);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "ledc_update_duty failed: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    
+    ESP_LOGD(TAG, "Beep stopped");
+    return ESP_OK;
 }
 
 static void beep_stop_async_task(void *arg)
@@ -208,33 +169,19 @@ esp_err_t play_note(uint16_t freq, uint32_t duration_ms)
         return ESP_ERR_INVALID_STATE;
     }
 
-    esp_err_t ret = beep_acquire_mutex(pdMS_TO_TICKS(100));
+    if (!beep_initialized) {
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    esp_err_t ret = beep_set_freq(freq);
     if (ret != ESP_OK) {
         return ret;
     }
-
-    do {
-        ret = beep_set_freq(freq);
-        if (ret != ESP_OK) {
-            break;
-        }
-        
-        // 释放锁，允许其他任务运行
-        beep_release_mutex();
-        
-        // 播放指定时长
-        vTaskDelay(pdMS_TO_TICKS(duration_ms));
-        
-        // 重新获取锁
-        ret = beep_acquire_mutex(pdMS_TO_TICKS(100));
-        if (ret != ESP_OK) {
-            return ret;
-        }
-        
-        ret = beep_stop();
-    } while (0);
-
-    beep_release_mutex();
+    
+    // 播放指定时长
+    vTaskDelay(pdMS_TO_TICKS(duration_ms));
+    
+    ret = beep_stop();
     return ret;
 }
 
@@ -244,39 +191,35 @@ esp_err_t play_note_async(uint16_t freq, uint32_t duration_ms)
         return ESP_ERR_INVALID_STATE;
     }
 
-    esp_err_t ret = beep_acquire_mutex(pdMS_TO_TICKS(100));
+    if (!beep_initialized) {
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    esp_err_t ret = beep_set_freq(freq);
     if (ret != ESP_OK) {
         return ret;
     }
-
-    do {
-        ret = beep_set_freq(freq);
-        if (ret != ESP_OK) {
-            break;
-        }
-        
-        // 释放锁，避免阻塞异步任务
-        beep_release_mutex();
-        
-        // 创建一个任务在duration_ms后停止蜂鸣器
-        int *delay_arg = malloc(sizeof(int));
-        if (delay_arg == NULL) {
-            ESP_LOGE(TAG, "Failed to allocate memory for delay_arg");
-            return ESP_ERR_NO_MEM;
-        }
-        *delay_arg = duration_ms;
-        
-        if (xTaskCreate(beep_stop_async_task, "beep_stop", 1024, delay_arg, 2, NULL) != pdPASS) {
-            free(delay_arg);
-            ESP_LOGE(TAG, "Failed to create async task");
-            return ESP_ERR_NO_MEM;
-        }
-    } while (0);
-
-    if (ret != ESP_OK) {
-        beep_release_mutex();
+    
+    ESP_LOGD(TAG, "Playing note at %d Hz for %d ms", freq, duration_ms);
+    
+    // 创建一个任务在duration_ms后停止蜂鸣器
+    int *delay_arg = malloc(sizeof(int));
+    if (delay_arg == NULL) {
+        ESP_LOGE(TAG, "Failed to allocate memory for delay_arg");
+        beep_stop(); // 停止蜂鸣器
+        return ESP_ERR_NO_MEM;
     }
-    return ret;
+    *delay_arg = duration_ms;
+    
+    if (xTaskCreate(beep_stop_async_task, "beep_stop_async", 2048, delay_arg, 5, NULL) != pdPASS) {
+        free(delay_arg);
+        ESP_LOGE(TAG, "Failed to create async task");
+        beep_stop(); // 停止蜂鸣器
+        return ESP_ERR_NO_MEM;
+    }
+    
+    ESP_LOGD(TAG, "Async task created successfully");
+    return ESP_OK;
 }
 
 esp_err_t beep_deinit(void)
@@ -285,23 +228,15 @@ esp_err_t beep_deinit(void)
         return ESP_OK;
     }
 
-    esp_err_t ret = beep_acquire_mutex(pdMS_TO_TICKS(100));
-    if (ret != ESP_OK) {
-        return ret;
+    if (!beep_initialized) {
+        return ESP_OK;
     }
 
     // 停止蜂鸣器
     beep_stop();
     
-    // 释放资源
-    if (beep_mutex != NULL) {
-        vSemaphoreDelete(beep_mutex);
-        beep_mutex = NULL;
-    }
-    
     beep_initialized = false;
     ESP_LOGI(TAG, "Beep deinitialized");
     
-    beep_release_mutex();
     return ESP_OK;
 }
