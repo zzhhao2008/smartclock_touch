@@ -134,22 +134,9 @@ void task_adc(void *arg)
     while (1)
     {
         // 读取并处理数据
-        bat_voltage = read_bat_voltage();
-        bat_percent = read_bat_percentage();
+        bat_voltage = read_bat_percentage();
         usb_voltage = read_usb_voltage();
-        charging = is_charging();
-
-        // 可以将数据发送到其他任务或更新UI
-        // xQueueSend(bat_queue, &bat_percent, 0);
-
-        // 检查电池低电压
-        if (bat_voltage < 3.2f)
-        {
-            ESP_LOGW(TAG, "Low battery voltage: %.2fV", bat_voltage);
-        }
-
-        // 电池监控可以5秒一次，充电状态可以1秒一次
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
 void app_main(void)
