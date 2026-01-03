@@ -6,7 +6,6 @@
 #include "basic/hardware/hw_key.h"
 #include "basic/pm.h"
 #include "nvs_flash.h"
-#include "ui/app_wifi_ui.h"
 #include "esp_log.h"
 #include "esp_task_wdt.h"
 #include "basic/beepdrive.h"
@@ -14,7 +13,12 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 
+#include "ui/app_ui.h"
+
 static const char *TAG = "MAPP";
+
+//#include "sys_s.c"
+
 struct key_log
 {
     TickType_t presstime;
@@ -48,7 +52,8 @@ typedef enum
     SYS_MSG_SET_BRIGHTNESS,
     SYS_MSG_POWER_OFF,
     SYS_MSG_WIFI_CONNECT,
-    SYS_MSG_WIFI_DISCONNECT
+    SYS_MSG_WIFI_DISCONNECT,
+    SYS_MSG_MSC,
 } system_message_type_t;
 
 // 消息结构体
@@ -174,7 +179,7 @@ void system_message_task(void *pvParameters)
             {
             case SYS_MSG_SCREEN_ON:
                 ESP_LOGI(TAG, "Processing: Turn screen ON");
-                bsp_display_brightness_fade(sys_status.screen_brightness,LCD_FADE_TIME_MS); // 恢复到默认亮度
+                bsp_display_brightness_fade(sys_status.screen_brightness, LCD_FADE_TIME_MS); // 恢复到默认亮度
                 sys_status.screen_on = true;
                 break;
 
@@ -186,13 +191,17 @@ void system_message_task(void *pvParameters)
 
             case SYS_MSG_SET_BRIGHTNESS:
                 ESP_LOGI(TAG, "Processing: Set brightness to %d", msg.param);
-                bsp_display_brightness_fade(msg.param,LCD_FADE_TIME_MS);
+                bsp_display_brightness_fade(msg.param, LCD_FADE_TIME_MS);
                 sys_status.screen_brightness = msg.param;
                 break;
 
             case SYS_MSG_POWER_OFF:
                 ESP_LOGI(TAG, "Processing: Power off system");
                 ACC(0); // 关闭电源
+                break;
+            case SYS_MSG_MSC:
+                ESP_LOGI(TAG, "Processing: MSC");
+                backToMS();
                 break;
             default:
                 ESP_LOGW(TAG, "Unknown message type: %d", msg.type);
@@ -291,8 +300,8 @@ void key_event_handler(int gpio, key_event_t evt, void *arg)
 
     if (gpio == HOME_KEY_GPIO && evt == KEY_EVT_PRESS)
     {
-        ESP_LOGI("KEY", "HOME key pressed - WiFi connect");
-        send_system_message(SYS_MSG_WIFI_CONNECT, 0);
+        ESP_LOGI("KEY", "HOME key pressed - Back To MSC");
+        send_system_message(SYS_MSG_MSC, 0);
     }
 }
 
@@ -365,5 +374,5 @@ void app_main(void)
     // 创建系统消息处理任务
     xTaskCreate(system_message_task, "sys_msg_task", SYSTEM_TASK_STACK_SIZE, NULL, SYSTEM_TASK_PRIORITY, NULL);
 
-    app_wifi_connect();
+    mainscr_init(); // 初始化主屏幕UI
 }
