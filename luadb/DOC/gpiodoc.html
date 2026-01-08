@@ -1,0 +1,1109 @@
+<article role="main">
+    <section id="gpio-gpio">
+        <h1>gpio - GPIO操作<a class="headerlink" href="#gpio-gpio" title="永久链接至标题">#</a></h1>
+        <section id="id1">
+            <h2>常量<a class="headerlink" href="#id1" title="永久链接至标题">#</a></h2>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>常量</p>
+                            </th>
+                            <th class="head">
+                                <p>类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>gpio.NONE</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>无效引脚,一般用于告诉底层某功能引脚不指定</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>gpio.LOW</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>低电平</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>gpio.HIGH</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>高电平</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>gpio.PULLUP</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>上拉</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>gpio.PULLDOWN</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>下拉</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>gpio.RISING</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>上升沿触发</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>gpio.FALLING</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>下降沿触发</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>gpio.BOTH</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>双向触发,部分设备支持</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>gpio.HIGH_IRQ</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>高电平触发,部分设备支持</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>gpio.LOW_IRQ</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>低电平触发,部分设备支持</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>gpio.WAKEUP0</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>休眠唤醒脚0,不支持输出</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>gpio.WAKEUP1</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>VBUS,USB唤醒脚,不支持输出</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>gpio.WAKEUP2</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>USIM热插拔脚,不支持输出</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>gpio.WAKEUP3</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>休眠唤醒脚3,与GPIO20是同一个引脚</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>gpio.WAKEUP4</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>休眠唤醒脚4,与GPIO21是同一个引脚</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>gpio.WAKEUP5</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>休眠唤醒脚5,与GPIO22是同一个引脚</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>gpio.WAKEUP6</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>休眠唤醒脚6,,不支持输出</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>gpio.PWR_KEY</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>开机键,支持双向触发中断,不支持输出</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="gpio-setup-pin-mode-pull-irq-alt">
+            <h2>gpio.setup(pin, mode, pull, irq, alt)<a class="headerlink" href="#gpio-setup-pin-mode-pull-irq-alt"
+                    title="永久链接至标题">#</a></h2>
+            <p>设置管脚功能</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>pin gpio编号,必须是数值</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>any</p>
+                            </td>
+                            <td>
+                                <p>mode
+                                    输入输出模式：<br>数字0/1代表输出模式<br>nil代表输入模式<br>function代表中断模式，如果填gpio.count，则为中断计数功能，中断时不回调
+                                </p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>pull 上拉下拉模式, 可以是上拉模式 gpio.PULLUP 或下拉模式 gpio.PULLDOWN, 或者开漏模式 0. 需要根据实际硬件选用</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>irq
+                                    中断触发模式,默认gpio.BOTH。中断触发模式<br>上升沿gpio.RISING<br>下降沿gpio.FALLING<br>上升和下降都触发gpio.BOTH
+                                </p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>alt 复用选项，目前只有Air780EXXX平台需要这个参数，有些GPIO可以复用到不同引脚上，可以选择复用选项（0或者4）从而复用到对应的引脚上</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>any</p>
+                            </td>
+                            <td>
+                                <p>输出模式返回设置电平的闭包, 输入模式和中断模式返回获取电平的闭包</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell0"><span></span><span class="c1">-- 设置gpio17为输入</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+
+<span class="c1">-- 设置gpio17为输出,且初始化电平为低,使用硬件默认上下拉配置</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">-- 设置gpio17为输出,且初始化电平为高,且启用内部上拉</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">gpio</span><span class="p">.</span><span class="n">PULLUP</span><span class="p">)</span>
+
+<span class="c1">-- 设置gpio27为中断, 默认双向触发</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">27</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="n">io_num</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"io"</span><span class="p">,</span><span class="n">io_num</span><span class="p">,</span><span class="n">val</span><span class="p">)</span> <span class="c1">-- 提醒, val并不代表触发方向, 仅代表中断后某个时间点的电平, io_num是IO序号</span>
+<span class="kr">end</span><span class="p">,</span> <span class="n">gpio</span><span class="p">.</span><span class="n">PULLUP</span><span class="p">)</span>
+
+<span class="c1">-- 设置gpio27为中断, 仅上升沿触发</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">27</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"IRQ_27"</span><span class="p">,</span><span class="n">val</span><span class="p">)</span> <span class="c1">-- 提醒, val并不代表触发方向, 仅代表中断后某个时间点的电平</span>
+<span class="kr">end</span><span class="p">,</span> <span class="n">gpio</span><span class="p">.</span><span class="n">PULLUP</span><span class="p">,</span> <span class="n">gpio</span><span class="p">.</span><span class="n">RISING</span><span class="p">)</span>
+
+<span class="c1">-- 中断计数 于2024.5.8新增</span>
+<span class="c1">-- 设置gpio7为中断计数，详细demo见gpio/gpio_irq_count</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">gpio</span><span class="p">.</span><span class="n">count</span><span class="p">)</span>
+
+<span class="c1">-- alt_func 于2023.7.2新增</span>
+<span class="c1">-- 本功能仅对AIR780EXXX有效,仅用于调整GPIO复用,不能用于外设复用调整</span>
+<span class="c1">-- 以下示例代码, 将I2S_DOUT复用成gpio18</span>
+<span class="c1">-- AIR780E的PIN33(模块管脚序号), 对应paddr 38, 默认功能是I2S_DOUT, 复用成gpio18</span>
+<span class="c1">-- 方向输出,且初始化电平为低,使用硬件默认上下拉配置</span>
+<span class="c1">-- Air780E(GPIO复用请查阅 https://air780e.cn 首页硬件资料表格中的Air780E&amp;Air780EG&amp;Air780EX&amp;Air700E_GPIO_table_20231227.pdf)</span>
+<span class="c1">-- Air780EP(GPIO复用请查阅 https://air780ep.cn 首页硬件资料表格中的Air780E&amp;Air780EG&amp;Air780EX&amp;Air700E_GPIO_table_20231227.pdf)</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="c1">-- 提醒: </span>
+<span class="c1">-- 当管脚为输入模式或中断,才能通过gpio.get()获取到电平</span>
+<span class="c1">-- 当管脚为输出模式,才能通过gpio.set()设置电平</span>
+<span class="c1">-- 当管脚为输出模式,通过gpio.get()总会得到0</span>
+<span class="c1">-- 中断回调的val参数不代表触发方向, 仅代表中断后某个时间点的电平</span>
+<span class="c1">-- 对Cat.1模块,Air780E只有GPIO20~22才能双向触发，其他系列所有GPIO都能双向触发，具体看硬件手册</span>
+<span class="c1">-- 默认设置下,中断是没有防抖时间的,可以通过gpio.set_debounce(pin, 50)来设置防抖时间</span>
+
+<span class="c1">-- pull参数的额外说明, 上拉/下拉配置</span>
+<span class="c1">-- 对于部分的BSP来说, 只支持 gpio.PULLUP 或 gpio.PULLDOWN, 但有部分BSP支持开漏模式</span>
+<span class="c1">-- 对于支持开漏的bsp, pull参数要传 0 才能开启开漏模式, 不是传nil</span>
+<span class="c1">-- 例如:</span>
+<span class="c1">-- EC618系列(Air780E/Air780EG/Air780EX/Air700E等)</span>
+<span class="c1">-- EC718系列(Air780EP/Air780EPV等)</span>
+<span class="c1">-- XT804系列(Air101/Air103/Air601)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="gpio-caplevel-pin-level-func">
+            <h2>gpio.caplevel(pin, level,func)<a class="headerlink" href="#gpio-caplevel-pin-level-func"
+                    title="永久链接至标题">#</a></h2>
+            <p>捕获管脚电平持续时长，单位us</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>pin GPIO编号,必须是数值</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>level 需要捕获的电平, 可以是 高电平gpio.HIGH, 低电平gpio.LOW,
+                                    或者直接写数值1或0，即管脚上正常时间处于level的反，捕获设定的level持续时间</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>function</p>
+                            </td>
+                            <td>
+                                <p>func 完成捕获后的回调函数，仅一个参数，参数为捕获到的时间长度number型数值，单位us</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>any</p>
+                            </td>
+                            <td>
+                                <p>返回获取电平的闭包</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell1"><span></span><span class="c1">-- 捕获pin.PA07为高电平的持续时间</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">caplevel</span><span class="p">(</span><span class="n">pin</span><span class="p">.</span><span class="n">PA07</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="kr">function</span><span class="p">(</span><span class="n">us_int</span><span class="p">)</span> <span class="nb">print</span><span class="p">(</span><span class="n">us_float</span><span class="p">)</span> <span class="kr">end</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="gpio-set-pin-value">
+            <h2>gpio.set(pin, value)<a class="headerlink" href="#gpio-set-pin-value" title="永久链接至标题">#</a></h2>
+            <p>设置管脚电平</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>pin GPIO编号,必须是数值</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>value 电平, 可以是 高电平gpio.HIGH, 低电平gpio.LOW, 或者直接写数值1或0</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>nil</p>
+                            </td>
+                            <td>
+                                <p>无返回值</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell2"><span></span><span class="c1">-- 设置gpio17为低电平</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="gpio-get-pin">
+            <h2>gpio.get(pin)<a class="headerlink" href="#gpio-get-pin" title="永久链接至标题">#</a></h2>
+            <p>获取管脚电平</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>pin GPIO编号,必须是数值</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>value</p>
+                            </td>
+                            <td>
+                                <p>电平, 高电平gpio.HIGH, 低电平gpio.LOW, 对应数值1和0</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell3"><span></span><span class="c1">-- 获取gpio17的当前电平</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="gpio-close-pin">
+            <h2>gpio.close(pin)<a class="headerlink" href="#gpio-close-pin" title="永久链接至标题">#</a></h2>
+            <p>关闭管脚功能(高阻输入态),关掉中断</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>pin GPIO编号,必须是数值</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>nil</p>
+                            </td>
+                            <td>
+                                <p>无返回值,总是执行成功</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell4"><span></span><span class="c1">-- 关闭gpio17</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">close</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="gpio-setdefaultpull-val">
+            <h2>gpio.setDefaultPull(val)<a class="headerlink" href="#gpio-setdefaultpull-val" title="永久链接至标题">#</a></h2>
+            <p>设置GPIO脚的默认上拉/下拉设置, 默认是平台自定义(一般为开漏).</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>val 0平台自定义,1上拉, 2下拉</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>boolean</p>
+                            </td>
+                            <td>
+                                <p>传值正确返回true,否则返回false</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell5"><span></span><span class="c1">-- 设置gpio.setup的pull默认值为上拉</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">setDefaultPull</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="gpio-toggle-pin">
+            <h2>gpio.toggle(pin)<a class="headerlink" href="#gpio-toggle-pin" title="永久链接至标题">#</a></h2>
+            <p>变换GPIO脚输出电平,仅输出模式可用</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>管脚的GPIO号</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>nil</p>
+                            </td>
+                            <td>
+                                <p>无返回值</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell6"><span></span><span class="c1">-- 本API于 2022.05.17 添加</span>
+<span class="c1">-- 假设GPIO16上有LED, 每500ms切换一次开关</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">sys</span><span class="p">.</span><span class="n">timerLoopStart</span><span class="p">(</span><span class="kr">function</span><span class="p">()</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">toggle</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="kr">end</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="gpio-pulse-pin-level-len-delay">
+            <h2>gpio.pulse(pin,level,len,delay)<a class="headerlink" href="#gpio-pulse-pin-level-len-delay"
+                    title="永久链接至标题">#</a></h2>
+            <p>在同一个GPIO输出一组脉冲, 注意, len的单位是bit, 高位在前.</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>gpio号</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int/string</p>
+                            </td>
+                            <td>
+                                <p>数值或者字符串.</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>len 长度 单位是bit, 高位在前.</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>delay 延迟,当前无固定时间单位</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>nil</p>
+                            </td>
+                            <td>
+                                <p>无返回值</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell7"><span></span><span class="c1">-- 通过PB06脚输出输出8个电平变化.</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">pulse</span><span class="p">(</span><span class="n">pin</span><span class="p">.</span><span class="n">PB06</span><span class="p">,</span><span class="mh">0xA9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell7">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="gpio-debounce-pin-ms-mode">
+            <h2>gpio.debounce(pin, ms, mode)<a class="headerlink" href="#gpio-debounce-pin-ms-mode"
+                    title="永久链接至标题">#</a></h2>
+            <p>防抖设置, 根据硬件ticks进行防抖</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>gpio号, 0~127, 与硬件相关</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>防抖时长,单位毫秒, 最大 65555 ms, 设置为0则关闭</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>模式, 0冷却模式, 1延时模式. 默认是0</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>nil</p>
+                            </td>
+                            <td>
+                                <p>无返回值</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell8"><span></span><span class="c1">-- 消抖模式, 当前支持2种, 2022.12.16开始支持mode=1</span>
+<span class="c1">-- 0 触发中断后,马上上报一次, 然后冷却N个毫秒后,重新接受中断</span>
+<span class="c1">-- 1 触发中断后,延迟N个毫秒,期间没有新中断且电平没有变化,上报一次</span>
+
+<span class="c1">-- 开启防抖, 模式0-冷却, 中断后马上上报, 但100ms内只上报一次</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">debounce</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="c1">-- 若芯片支持pin库, 可用pin.PA7代替数字7</span>
+<span class="c1">-- 开启防抖, 模式1-延时, 中断后等待100ms,期间若保持该电平了,时间到之后上报一次</span>
+<span class="c1">-- 对应的,如果输入的是一个 50hz的方波,那么不会触发任何上报</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">debounce</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">-- 关闭防抖,时间设置为0就关闭</span>
+<span class="n">gpio</span><span class="p">.</span><span class="n">debounce</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="gpio-count-pin">
+            <h2>gpio.count(pin)<a class="headerlink" href="#gpio-count-pin" title="永久链接至标题">#</a></h2>
+            <p>获取gpio中断数量，并清空累计值，类似air724的脉冲计数</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>gpio号, 0~127, 与硬件相关</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>返回从上次获取中断数量后到当前的中断计数</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell9"><span></span><span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"irq cnt"</span><span class="p">,</span> <span class="n">gpio</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell9">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <hr class="docutils">
+        </section>
+    </section>
+
+</article>

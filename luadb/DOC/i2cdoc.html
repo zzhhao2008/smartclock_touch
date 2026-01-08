@@ -1,0 +1,1299 @@
+<article role="main">
+    <section id="i2c-i2c">
+        <h1>i2c - I2C操作<a class="headerlink" href="#i2c-i2c" title="永久链接至标题">#</a></h1>
+        <section id="id1" class="">
+            <h2>常量<a class="headerlink" href="#id1" title="永久链接至标题">#</a></h2>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>常量</p>
+                            </th>
+                            <th class="head">
+                                <p>类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>i2c.FAST</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>高速</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>i2c.SLOW</p>
+                            </td>
+                            <td>
+                                <p>number</p>
+                            </td>
+                            <td>
+                                <p>低速</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="i2c-exist-id" class="">
+            <h2>i2c.exist(id)<a class="headerlink" href="#i2c-exist-id" title="永久链接至标题">#</a></h2>
+            <p>i2c编号是否存在</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>bool</p>
+                            </td>
+                            <td>
+                                <p>存在就返回true,否则返回false</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell0"><span></span><span class="c1">-- 检查i2c1是否存在</span>
+<span class="kr">if</span> <span class="n">i2c</span><span class="p">.</span><span class="n">exist</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="kr">then</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"存在 i2c1"</span><span class="p">)</span>
+<span class="kr">end</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-setup-id-speed-pullup">
+            <h2>i2c.setup(id, speed, pullup)<a class="headerlink" href="#i2c-setup-id-speed-pullup"
+                    title="永久链接至标题">#</a></h2>
+            <p>i2c初始化</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>I2C速度, 例如i2c.FAST</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>bool</p>
+                            </td>
+                            <td>
+                                <p>是否软件上拉, 默认不开启，需要硬件支持</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>成功就返回1,否则返回0</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell1"><span></span><span class="c1">-- 初始化i2c1</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">i2c</span><span class="p">.</span><span class="n">FAST</span><span class="p">)</span> <span class="c1">-- id正确就一定成功</span>
+<span class="c1">-- 如需判断i2c id是否合法, 请使用 i2c.exist 函数</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-createsoft-scl-sda-delay" class="">
+            <h2>i2c.createSoft(scl,sda,delay)<a class="headerlink" href="#i2c-createsoft-scl-sda-delay"
+                    title="永久链接至标题">#</a></h2>
+            <p>新建一个软件i2c对象</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>i2c SCL引脚编号(GPIO编号)</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>i2c SDA引脚编号(GPIO编号)</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>每个操作的延时, 单位us, 默认5</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>软件I2C对象</p>
+                            </td>
+                            <td>
+                                <p>可当作i2c的id使用</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell2"><span></span><span class="c1">-- 注意！这个接口是软件模拟i2c，速度可能会比硬件的慢</span>
+<span class="c1">-- 不需要调用i2c.close接口</span>
+<span class="c1">-- 初始化软件i2c</span>
+<span class="kd">local</span> <span class="n">softI2C</span> <span class="o">=</span> <span class="n">i2c</span><span class="p">.</span><span class="n">createSoft</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">softI2C</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="nb">string.char</span><span class="p">(</span><span class="mh">0x0F</span><span class="p">,</span> <span class="mh">0x2F</span><span class="p">))</span>
+<span class="c1">-- 注意, 第3个参数是 2023.06.19 添加的delay</span>
+<span class="c1">-- 通过调整delay参数的值, 可增加或降低I2C的速度</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-send-id-addr-data-stop">
+            <h2>i2c.send(id, addr, data,stop)<a class="headerlink" href="#i2c-send-id-addr-data-stop"
+                    title="永久链接至标题">#</a></h2>
+            <p>i2c发送数据</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>I2C子设备的地址, 7位地址</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>integer/string/table</p>
+                            </td>
+                            <td>
+                                <p>待发送的数据,自适应参数类型</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>integer</p>
+                            </td>
+                            <td>
+                                <p>可选参数 是否发送停止位 1发送 0不发送 默认发送(105不支持)</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>true/false</p>
+                            </td>
+                            <td>
+                                <p>发送是否成功</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell3"><span></span><span class="c1">-- 往i2c0发送1个字节的数据</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0x68</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">)</span>
+<span class="c1">-- 往i2c1发送2个字节的数据</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="nb">string.char</span><span class="p">(</span><span class="mh">0x0F</span><span class="p">,</span> <span class="mh">0x2F</span><span class="p">))</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="p">{</span><span class="mh">0x0F</span><span class="p">,</span> <span class="mh">0x2F</span><span class="p">})</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-recv-id-addr-len">
+            <h2>i2c.recv(id, addr, len)<a class="headerlink" href="#i2c-recv-id-addr-len" title="永久链接至标题">#</a></h2>
+            <p>i2c接收数据</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>I2C子设备的地址, 7位地址</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>接收数据的长度</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>string</p>
+                            </td>
+                            <td>
+                                <p>收到的数据</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell4"><span></span><span class="c1">-- 从i2c1读取2个字节的数据</span>
+<span class="kd">local</span> <span class="n">data</span> <span class="o">=</span> <span class="n">i2c</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-writereg-id-addr-reg-data-stop">
+            <h2>i2c.writeReg(id, addr, reg, data,stop)<a class="headerlink" href="#i2c-writereg-id-addr-reg-data-stop"
+                    title="永久链接至标题">#</a></h2>
+            <p>i2c写寄存器数据</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>I2C子设备的地址, 7位地址</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>寄存器地址</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>string</p>
+                            </td>
+                            <td>
+                                <p>待发送的数据</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>integer</p>
+                            </td>
+                            <td>
+                                <p>可选参数 是否发送停止位 1发送 0不发送 默认发送(105不支持)</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>true/false</p>
+                            </td>
+                            <td>
+                                <p>发送是否成功</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell5"><span></span><span class="c1">-- 从i2c1的地址为0x5C的设备的寄存器0x01写入2个字节的数据</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">writeReg</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="nb">string.char</span><span class="p">(</span><span class="mh">0x00</span><span class="p">,</span> <span class="mh">0xF2</span><span class="p">))</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-readreg-id-addr-reg-len">
+            <h2>i2c.readReg(id, addr, reg, len)<a class="headerlink" href="#i2c-readreg-id-addr-reg-len"
+                    title="永久链接至标题">#</a></h2>
+            <p>i2c读寄存器数据</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>I2C子设备的地址, 7位地址</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>寄存器地址</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>待接收的数据长度</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>integer</p>
+                            </td>
+                            <td>
+                                <p>可选参数 是否发送停止位 1发送 0不发送 默认发送(105不支持)</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>string</p>
+                            </td>
+                            <td>
+                                <p>收到的数据</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell6"><span></span><span class="c1">-- 从i2c1的地址为0x5C的设备的寄存器0x01读出2个字节的数据</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">readReg</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mh">0x5C</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-close-id">
+            <h2>i2c.close(id)<a class="headerlink" href="#i2c-close-id" title="永久链接至标题">#</a></h2>
+            <p>关闭i2c设备</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>nil</p>
+                            </td>
+                            <td>
+                                <p>无返回值</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell7"><span></span><span class="c1">-- 关闭i2c1</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">close</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell7">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-readdht12-id">
+            <h2>i2c.readDHT12(id)<a class="headerlink" href="#i2c-readdht12-id" title="永久链接至标题">#</a></h2>
+            <p>从i2c总线读取DHT12的温湿度数据</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>DHT12的设备地址,默认0x5C</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>boolean</p>
+                            </td>
+                            <td>
+                                <p>读取成功返回true,否则返回false</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>湿度值,单位0.1%, 例如 591 代表 59.1%</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>温度值,单位0.1摄氏度, 例如 292 代表 29.2摄氏度</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell8"><span></span><span class="c1">-- 从i2c0读取DHT12</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">re</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">i2c</span><span class="p">.</span><span class="n">readDHT12</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="kr">if</span> <span class="n">re</span> <span class="kr">then</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"dht12"</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+<span class="kr">end</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-readsht30-id-addr">
+            <h2>i2c.readSHT30(id,addr)<a class="headerlink" href="#i2c-readsht30-id-addr" title="永久链接至标题">#</a></h2>
+            <p>从i2c总线读取DHT30的温湿度数据(由”好奇星”贡献)</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备addr,SHT30的设备地址,默认0x44 bit7</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>boolean</p>
+                            </td>
+                            <td>
+                                <p>读取成功返回true,否则返回false</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>湿度值,单位0.1%, 例如 591 代表 59.1%</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>温度值,单位0.1摄氏度, 例如 292 代表 29.2摄氏度</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell9"><span></span><span class="c1">-- 从i2c0读取SHT30</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">re</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">i2c</span><span class="p">.</span><span class="n">readSHT30</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="kr">if</span> <span class="n">re</span> <span class="kr">then</span>
+<span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"sht30"</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+<span class="kr">end</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell9">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-transfer-id-addr-txbuff-rxbuff-rxlen">
+            <h2>i2c.transfer(id, addr, txBuff, rxBuff, rxLen)<a class="headerlink"
+                    href="#i2c-transfer-id-addr-txbuff-rxbuff-rxlen" title="永久链接至标题">#</a></h2>
+            <p>i2c通用传输，包括发送N字节，发送N字节+接收N字节，接收N字节三种功能，在发送转接收过程中发送reStart信号,解决类似mlx90614必须带restart信号，但是又不能用i2c.send来控制的，比如air105
+            </p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>I2C子设备的地址, 7位地址</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>integer/string/zbuff</p>
+                            </td>
+                            <td>
+                                <p>待发送的数据,自适应参数类型，如果为nil，则不发送数据</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>zbuff</p>
+                            </td>
+                            <td>
+                                <p>待接收数据的zbuff 如果不用zbuff，则接收数据将在return返回</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>需要接收的数据长度，如果为0或nil，则不接收数据</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>boolean</p>
+                            </td>
+                            <td>
+                                <p>true/false 发送是否成功</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>string</p>
+                            </td>
+                            <td>
+                                <p>or nil 如果参数5是interger，则返回接收到的数据</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell10"><span></span><span class="kd">local</span> <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">i2c</span><span class="p">.</span><span class="n">transfer</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="n">txbuff</span><span class="p">,</span> <span class="n">rxbuff</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">i2c</span><span class="p">.</span><span class="n">transfer</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="n">txbuff</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>    <span class="c1">--只发送txbuff里的数据，不接收数据，典型应用就是写寄存器了，这里寄存器地址和值都放在了txbuff里</span>
+<span class="kd">local</span> <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">i2c</span><span class="p">.</span><span class="n">transfer</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="s2">"</span><span class="se">\x01\x02\x03</span><span class="s2">"</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">--发送0x01， 0x02，0x03，不接收数据，如果是eeprom，就是往0x01的地址写02和03，或者往0x0102的地址写03，看具体芯片了</span>
+<span class="kd">local</span> <span class="n">result</span><span class="p">,</span> <span class="n">rxdata</span> <span class="o">=</span> <span class="n">i2c</span><span class="p">.</span><span class="n">transfer</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="s2">"</span><span class="se">\x01\x02</span><span class="s2">"</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">--发送0x01， 0x02，然后接收1个字节，典型应用就是eeprom</span>
+<span class="kd">local</span> <span class="n">result</span><span class="p">,</span> <span class="n">rxdata</span> <span class="o">=</span> <span class="n">i2c</span><span class="p">.</span><span class="n">transfer</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">--发送0x00，然后接收1个字节，典型应用各种传感器</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-xfer-id-addr-txbuff-rxbuff-rxlen-transfer-done-topic-timeout">
+            <h2>i2c.xfer(id, addr, txBuff, rxBuff, rxLen, transfer_done_topic, timeout)<a class="headerlink"
+                    href="#i2c-xfer-id-addr-txbuff-rxbuff-rxlen-transfer-done-topic-timeout" title="永久链接至标题">#</a></h2>
+            <p>i2c非阻塞通用传输，类似transfer，但是不会等到I2C传输完成才返回，调用本函数会立刻返回，I2C传输完成后，通过消息回调</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>I2C子设备的地址, 7位地址</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>zbuff</p>
+                            </td>
+                            <td>
+                                <p>待发送的数据，由于用的非阻塞模型，为保证动态数据的有效性，只能使用zbuff，发送的数据从zbuff.addr开始，长度为zbuff.used</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>zbuff</p>
+                            </td>
+                            <td>
+                                <p>待接收数据的zbuff，如果为nil，则忽略后面参数， 不接收数据。接收的数据会放在zbuff.addr开始的位置，会覆盖掉之前的数据，注意zhuff的预留空间要足够
+                                </p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>需要接收的数据长度，如果为0或nil，则不接收数据</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>string</p>
+                            </td>
+                            <td>
+                                <p>传输完成后回调的消息</p>
+                            </td>
+                        </tr>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>超时时间，如果填nil，则为100ms</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>boolean</p>
+                            </td>
+                            <td>
+                                <p>true/false 本次传输是否正确启动，true，启动，false，有错误无法启动。传输完成会发布消息transfer_done_topic和boolean型结果
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell11"><span></span><span class="kd">local</span> <span class="n">result</span> <span class="o">=</span> <span class="n">i2c</span><span class="p">.</span><span class="n">xfer</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="n">txbuff</span><span class="p">,</span> <span class="n">rxbuff</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"I2CDONE"</span><span class="p">)</span> <span class="kr">if</span> <span class="n">result</span> <span class="kr">then</span> <span class="n">result</span><span class="p">,</span> <span class="n">i2c_id</span><span class="p">,</span> <span class="n">succ</span><span class="p">,</span> <span class="n">error_code</span> <span class="o">=</span> <span class="n">sys</span><span class="p">.</span><span class="n">waitUntil</span><span class="p">(</span><span class="s2">"I2CDONE"</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">if</span> <span class="ow">not</span> <span class="n">result</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">succ</span> <span class="kr">then</span> <span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"i2c fail, error code"</span><span class="p">,</span> <span class="n">error_code</span><span class="p">)</span> <span class="kr">else</span> <span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"i2c ok"</span><span class="p">)</span> <span class="kr">end</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell11">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <hr class="docutils">
+        <section id="i2c-scan-id-speed">
+            <h2>i2c.scan(id,speed)<a class="headerlink" href="#i2c-scan-id-speed" title="永久链接至标题">#</a></h2>
+            <p>扫描i2c设备</p>
+            <p><strong>参数</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>传入值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>设备id, 例如i2c1的id为1, i2c2的id为2</p>
+                            </td>
+                        </tr>
+                        <tr class="row-odd">
+                            <td>
+                                <p>int</p>
+                            </td>
+                            <td>
+                                <p>速度, 可选i2c.SLOW i2c.FAST i2c.PLUS i2c.HSMODE 默认为i2c.SLOW,如探测不到则修改此项</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>返回值</strong></p>
+            <div class="table-wrapper">
+                <table class="colwidths-auto docutils align-default">
+                    <thead>
+                        <tr class="row-odd">
+                            <th class="head">
+                                <p>返回值类型</p>
+                            </th>
+                            <th class="head">
+                                <p>解释</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-even">
+                            <td>
+                                <p>nil</p>
+                            </td>
+                            <td>
+                                <p>当前无返回值</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>例子</strong></p>
+            <div class="highlight-lua notranslate">
+                <div class="highlight">
+                    <pre id="codecell12"><span></span><span class="c1">-- 本函数于2023.07.04添加</span>
+<span class="c1">-- 这个函数的主要目标是为了在开发期扫描i2c设备</span>
+<span class="c1">-- 有些BSP在指定addr无响应时会输出日志,导致输出会被打乱</span>
+<span class="n">i2c</span><span class="p">.</span><span class="n">scan</span><span class="p">()</span>
+</pre><button class="copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#codecell12">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="44"
+                            height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#000000" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <title>Copy to clipboard</title>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <rect x="8" y="8" width="12" height="12" rx="2"></rect>
+                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <hr class="docutils">
+        </section>
+    </section>
+
+</article>
