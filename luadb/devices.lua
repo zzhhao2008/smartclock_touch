@@ -78,35 +78,117 @@ function adc_battery()
     return batV / S_CFG.BAT_ATTEN / 1000
 end
 
+-- 电池电压-电量映射表 (3.7V 1500mAh 锂聚合物电池)
+-- 数据点基于典型放电曲线，在关键拐点处增加采样密度
+local BAT_CURVE = {{
+    v = 3.50,
+    p = 0
+}, -- 截止电压
+{
+    v = 3.60,
+    p = 10
+}, -- 低电量区开始快速下降
+{
+    v = 3.65,
+    p = 15
+}, {
+    v = 3.70,
+    p = 25
+}, -- 中低电量区
+{
+    v = 3.75,
+    p = 40
+}, {
+    v = 3.80,
+    p = 55
+}, -- 中电量平台区
+{
+    v = 3.85,
+    p = 70
+}, {
+    v = 3.95,
+    p = 85
+}, -- 高电量区开始
+{
+    v = 4.10,
+    p = 95
+}, -- 高电量区缓慢下降
+{
+    v = 4.20,
+    p = 100
+} -- 满电
+}
+
+-- 通过线性插值计算电池百分比
+local function calculate_battery_percent(voltage)
+    -- 电压保护
+    if voltage >= BAT_CURVE[#BAT_CURVE].v then
+        return 100
+    end
+    if voltage <= BAT_CURVE[1].v then
+        return 0
+    end
+
+    -- 查找电压所在的区间
+    for i = 1, #BAT_CURVE - 1 do
+        local point1 = BAT_CURVE[i]
+        local point2 = BAT_CURVE[i + 1]
+
+        if voltage >= point1.v and voltage < point2.v then
+            -- 线性插值: p = p1 + (p2-p1)*(v-v1)/(v2-v1)
+            local ratio = (voltage - point1.v) / (point2.v - point1.v)
+            return math.floor(point1.p + ratio * (point2.p - point1.p))
+        end
+    end
+
+    return 50 -- 默认值，理论上不会执行到
+end
+
 function update_adc()
     local usbV = adc_usbin()
     local batV = adc_battery()
-    if (usbV > 4) then
-        if (not STATUS.USB_Connect) then
+
+    -- USB连接检测
+    if usbV > 4.0 then
+        if not STATUS.USB_Connect then
             sys.publish(EVENTS.CHARGER_CONNECT)
         end
         STATUS.USB_Connect = true
     else
-        if (STATUS.USB_Connect) then
+        if STATUS.USB_Connect then
             sys.publish(EVENTS.CHARGER_DISCONNECT)
         end
         STATUS.USB_Connect = false
     end
 
+    -- 保存原始电压值
     STATUS.BAT_Vol = batV
-    STATUS.BAT_Percent = math.floor((batV - 3.55) / (4.15 - 3.55) * 100)
 
-    if STATUS.BAT_Percent > 100 then
-        STATUS.BAT_Percent = 100
-    elseif STATUS.BAT_Percent < 0 then
-        STATUS.BAT_Percent = 0
-    end
-    if (batV < 3.5) then
+    -- 使用曲线拟合计算精确电量
+    STATUS.BAT_Percent = calculate_battery_percent(batV)
+
+    -- 电量状态事件
+    if batV < 3.55 and not STATUS.BAT_Low then
+        STATUS.BAT_Low = true
         sys.publish(EVENTS.BAT_LOW)
+    elseif batV > 3.65 and STATUS.BAT_Low then
+        STATUS.BAT_Low = false
     end
-    if (batV > 4.2) then
+
+    -- 充电完成检测 (更精确的判断)
+    if STATUS.BAT_Charging and batV > 4.18 and not STATUS.BAT_Full then
+        STATUS.BAT_Full = true
         sys.publish(EVENTS.BAT_FULL)
+    elseif not STATUS.BAT_Charging and batV < 4.15 then
+        STATUS.BAT_Full = false
     end
+
+    -- 充电状态同步
+    if STATUS.BAT_Charging and batV < 3.8 then
+        STATUS.BAT_Full = false
+    end
+
+    --log.debug("bat", string.format("V=%.2fV, %%=%d", batV, STATUS.BAT_Percent))
 end
 
 sys.taskInit(function()
@@ -145,10 +227,11 @@ function BEEP(frec, volu, time)
     if (time == nil) then
         time = 300
     end
-    pwm.open(9, frec, volu)
+    volu = math.floor(volu / 2)
+    pwm.open(S_CFG.DEVICE.BEEP, frec, volu)
 
     sys.timerStart(function()
-        pwm.close(9)
+        pwm.close(S_CFG.DEVICE.BEEP)
     end, time)
 end
 -- PM
@@ -243,6 +326,7 @@ end, nil, gpio.BOTH)
 
 sys.taskInit(function()
     registerPWK()
+    -- BEEP(2500, 100, 20)
     -- 为了节省时间，我们把LVGL的初始化放在协程处理
     -- 启动LVGL
     lvgl.init()
