@@ -15,7 +15,7 @@ spi_lcd = spi.deviceSetup(spi_id, pin_cs, 0, 0, 8, 40 * 1000 * 1000, spi.MSB, 1,
 lcd.init("st7789", {
     port = "device",
     pin_dc = pin_dc,
-    pin_pwr = bl,
+    pin_pwr = -1,
     pin_rst = pin_reset,
     direction = 3,
     w = 320,
@@ -25,5 +25,9 @@ lcd.init("st7789", {
 }, spi_lcd)
 
 lcd.clear()
+
+-- 背光渐亮效果
+pwm.open(bl, 1000, 0)  -- 初始0%占空比
+pwm.fade(bl, 100, 3000)  -- 3秒内渐亮到100%
 
 --lcd.drawStr(50,80,"Hello World!")
